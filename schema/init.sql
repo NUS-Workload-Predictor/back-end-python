@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.5.5-10.1.21-MariaDB)
 # Database: nusworks
-# Generation Time: 2017-01-29 08:42:26 +0000
+# Generation Time: 2017-01-29 09:14:34 +0000
 # ************************************************************
 
 
@@ -20,12 +20,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-# Dump of table assignment
+# Dump of table assignment_difficulty
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `assignment`;
+DROP TABLE IF EXISTS `assignment_difficulty`;
 
-CREATE TABLE `assignment` (
+CREATE TABLE `assignment_difficulty` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL DEFAULT '',
   `time` float NOT NULL,
@@ -37,12 +37,29 @@ CREATE TABLE `assignment` (
 
 
 
-# Dump of table exam
+# Dump of table assignment_workload
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `exam`;
+DROP TABLE IF EXISTS `assignment_workload`;
 
-CREATE TABLE `exam` (
+CREATE TABLE `assignment_workload` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL DEFAULT '',
+  `time` float NOT NULL,
+  `percentage` float NOT NULL,
+  `coverage` float NOT NULL,
+  `people` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table exam_difficulty
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `exam_difficulty`;
+
+CREATE TABLE `exam_difficulty` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL DEFAULT '',
   `percentage` float NOT NULL,
@@ -53,12 +70,28 @@ CREATE TABLE `exam` (
 
 
 
-# Dump of table presentation
+# Dump of table exam_workload
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `presentation`;
+DROP TABLE IF EXISTS `exam_workload`;
 
-CREATE TABLE `presentation` (
+CREATE TABLE `exam_workload` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL DEFAULT '',
+  `percentage` float NOT NULL,
+  `coverage` float NOT NULL,
+  `duration` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table presentation_difficulty
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `presentation_difficulty`;
+
+CREATE TABLE `presentation_difficulty` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL DEFAULT '',
   `time` float NOT NULL,
@@ -71,12 +104,30 @@ CREATE TABLE `presentation` (
 
 
 
-# Dump of table project
+# Dump of table presentation_workload
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `project`;
+DROP TABLE IF EXISTS `presentation_workload`;
 
-CREATE TABLE `project` (
+CREATE TABLE `presentation_workload` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL DEFAULT '',
+  `time` float NOT NULL,
+  `percentage` float NOT NULL,
+  `coverage` float NOT NULL,
+  `people` float NOT NULL,
+  `duration` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table project_difficulty
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_difficulty`;
+
+CREATE TABLE `project_difficulty` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL DEFAULT '',
   `time` float NOT NULL,
@@ -88,12 +139,29 @@ CREATE TABLE `project` (
 
 
 
-# Dump of table reading
+# Dump of table project_workload
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `reading`;
+DROP TABLE IF EXISTS `project_workload`;
 
-CREATE TABLE `reading` (
+CREATE TABLE `project_workload` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL DEFAULT '',
+  `time` float NOT NULL,
+  `percentage` float NOT NULL,
+  `coverage` float NOT NULL,
+  `people` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table reading_difficulty
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `reading_difficulty`;
+
+CREATE TABLE `reading_difficulty` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL DEFAULT '',
   `amount` float NOT NULL,
@@ -103,12 +171,43 @@ CREATE TABLE `reading` (
 
 
 
-# Dump of table test
+# Dump of table reading_workload
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `test`;
+DROP TABLE IF EXISTS `reading_workload`;
 
-CREATE TABLE `test` (
+CREATE TABLE `reading_workload` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL DEFAULT '',
+  `amount` float NOT NULL,
+  `difficulty` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table test_difficulty
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `test_difficulty`;
+
+CREATE TABLE `test_difficulty` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL DEFAULT '',
+  `percentage` float NOT NULL,
+  `coverage` float NOT NULL,
+  `duration` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table test_workload
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `test_workload`;
+
+CREATE TABLE `test_workload` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL DEFAULT '',
   `percentage` float NOT NULL,
