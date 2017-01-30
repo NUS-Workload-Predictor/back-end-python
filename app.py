@@ -72,6 +72,21 @@ class AssignmentDifficulty(db.Model):
     people = db.Column(db.Float)
     intercept = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
+
+    def update(self, attr_list):
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
+
 
 class AssignmentDifficultySchema(ma.ModelSchema):
     class Meta:
@@ -185,6 +200,21 @@ class ProjectDifficulty(db.Model):
     coverage = db.Column(db.Float)
     people = db.Column(db.Float)
     intercept = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
+
+    def update(self, attr_list):
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
 
 
 class ProjectDifficultySchema(ma.ModelSchema):
@@ -304,6 +334,23 @@ class PresentationDifficulty(db.Model):
     duration = db.Column(db.Float)
     intercept = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.duration = attr_list[4]
+        self.intercept = attr_list[5]
+
+    def update(self, attr_list):
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.duration = attr_list[4]
+        self.intercept = attr_list[5]
+
 
 class PresentationDifficultySchema(ma.ModelSchema):
     class Meta:
@@ -412,6 +459,17 @@ class ReadingDifficulty(db.Model):
     difficulty = db.Column(db.Float)
     intercept = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.amount = attr_list[0]
+        self.difficulty = attr_list[1]
+        self.intercept = attr_list[2]
+
+    def update(self, attr_list):
+        self.amount = attr_list[0]
+        self.difficulty = attr_list[1]
+        self.intercept = attr_list[2]
+
 
 class ReadingDifficultySchema(ma.ModelSchema):
     class Meta:
@@ -517,6 +575,19 @@ class TestDifficulty(db.Model):
     coverage = db.Column(db.Float)
     duration = db.Column(db.Float)
     intercept = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.intercept = attr_list[3]
+
+    def update(self, attr_list):
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.intercept = attr_list[3]
 
 
 class TestDifficultySchema(ma.ModelSchema):
@@ -625,6 +696,19 @@ class ExamDifficulty(db.Model):
     coverage = db.Column(db.Float)
     duration = db.Column(db.Float)
     intercept = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.intercept = attr_list[3]
+
+    def update(self, attr_list):
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.intercept = attr_list[3]
 
 
 class ExamDifficultySchema(ma.ModelSchema):
