@@ -243,6 +243,126 @@ class ProjectDifficultyDataSchema(ma.ModelSchema):
 project_difficulty_data_schema = ProjectDifficultyDataSchema(strict=True)
 
 
+########################################################################################################################
+########################################################################################################################
+
+# presentation workload
+class PresentationWorkload(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.duration = attr_list[4]
+        self.intercept = attr_list[5]
+
+    def update(self, attr_list):
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.duration = attr_list[4]
+        self.intercept = attr_list[5]
+
+
+class PresentationWorkloadSchema(ma.ModelSchema):
+    class Meta:
+        model = PresentationWorkload
+
+
+presentation_workload_schema = PresentationWorkloadSchema(strict=True)
+
+
+class PresentationWorkloadResource(Resource):
+    def get(self, module_code):
+        presentation_workload_query = PresentationWorkload.query.filter_by(code=module_code).first()
+        result = presentation_workload_schema.dump(presentation_workload_query).data
+        return result
+
+
+api.add_resource(PresentationWorkloadResource, '/workload/presentation/<string:module_code>')
+
+
+# presentation difficulty
+class PresentationDifficulty(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+
+class PresentationDifficultySchema(ma.ModelSchema):
+    class Meta:
+        model = PresentationDifficulty
+
+
+presentation_difficulty_schema = PresentationDifficultySchema(strict=True)
+
+
+class PresentationDifficultyResource(Resource):
+    def get(self, module_code):
+        presentation_difficulty_query = PresentationDifficulty.query.filter_by(code=module_code).first()
+        result = presentation_difficulty_schema.dump(presentation_difficulty_query).data
+        return result
+
+
+api.add_resource(PresentationDifficultyResource, '/difficulty/presentation/<string:module_code>')
+
+
+# presentation workload data
+class PresentationWorkloadData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class PresentationWorkloadDataSchema(ma.ModelSchema):
+    class Meta:
+        model = PresentationWorkloadData
+
+
+presentation_workload_data_schema = PresentationWorkloadDataSchema(strict=True)
+
+
+# presentation difficulty data
+class PresentationDifficultyData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class PresentationDifficultyDataSchema(ma.ModelSchema):
+    class Meta:
+        model = PresentationDifficultyData
+
+
+presentation_difficulty_data_schema = PresentationDifficultyDataSchema(strict=True)
+
+
 db.create_all()
 
 
