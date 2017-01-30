@@ -18,6 +18,7 @@ def index():
     return 'Hello World!'
 
 
+# assignment workload
 class AssignmentWorkload(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10))
@@ -61,6 +62,7 @@ class AssignmentWorkloadResource(Resource):
 api.add_resource(AssignmentWorkloadResource, '/workload/assignment/<string:module_code>')
 
 
+# assignment difficulty
 class AssignmentDifficulty(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10))
@@ -89,6 +91,7 @@ class AssignmentDifficultyResource(Resource):
 api.add_resource(AssignmentDifficultyResource, '/difficulty/assignment/<string:module_code>')
 
 
+# assignment workload data
 class AssignmentWorkloadData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10))
@@ -107,6 +110,7 @@ class AssignmentWorkloadDataSchema(ma.ModelSchema):
 assignment_workload_data_schema = AssignmentWorkloadDataSchema(strict=True)
 
 
+# assignment difficulty data
 class AssignmentDifficultyData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10))
@@ -123,6 +127,120 @@ class AssignmentDifficultyDataSchema(ma.ModelSchema):
 
 
 assignment_difficulty_data_schema = AssignmentDifficultyDataSchema(strict=True)
+
+
+########################################################################################################################
+########################################################################################################################
+
+# project workload
+class ProjectWorkload(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
+
+    def update(self, attr_list):
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
+
+
+class ProjectWorkloadSchema(ma.ModelSchema):
+    class Meta:
+        model = ProjectWorkload
+
+
+project_workload_schema = ProjectWorkloadSchema(strict=True)
+
+
+class ProjectWorkloadResource(Resource):
+    def get(self, module_code):
+        project_workload_query = ProjectWorkload.query.filter_by(code=module_code).first()
+        result = project_workload_schema.dump(project_workload_query).data
+        return result
+
+
+api.add_resource(ProjectWorkloadResource, '/workload/project/<string:module_code>')
+
+
+# project difficulty
+class ProjectDifficulty(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+
+class ProjectDifficultySchema(ma.ModelSchema):
+    class Meta:
+        model = ProjectDifficulty
+
+
+project_difficulty_schema = ProjectDifficultySchema(strict=True)
+
+
+class ProjectDifficultyResource(Resource):
+    def get(self, module_code):
+        project_difficulty_query = ProjectDifficulty.query.filter_by(code=module_code).first()
+        result = project_difficulty_schema.dump(project_difficulty_query).data
+        return result
+
+
+api.add_resource(ProjectDifficultyResource, '/difficulty/project/<string:module_code>')
+
+
+# project workload data
+class ProjectWorkloadData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class ProjectWorkloadDataSchema(ma.ModelSchema):
+    class Meta:
+        model = ProjectWorkloadData
+
+
+project_workload_data_schema = ProjectWorkloadDataSchema(strict=True)
+
+
+# project difficulty data
+class ProjectDifficultyData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    time = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    people = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class ProjectDifficultyDataSchema(ma.ModelSchema):
+    class Meta:
+        model = ProjectDifficultyData
+
+
+project_difficulty_data_schema = ProjectDifficultyDataSchema(strict=True)
 
 
 db.create_all()
@@ -202,6 +320,8 @@ class Train(Resource):
         return 'assignment workload train success'
 
     def train_assignment_difficulty(self):
+        self.train(AssignmentDifficultyData, AssignmentDifficulty, assignment_difficulty_data_schema, 'assignment')
+
         return "assignment difficulty train success"
 
     def train_presentation_workload(self):
@@ -211,9 +331,13 @@ class Train(Resource):
         return "presentation difficulty train success"
 
     def train_project_workload(self):
+        self.train(ProjectWorkloadData, ProjectWorkload, project_workload_data_schema, 'project')
+
         return "project workload train success"
 
     def train_project_difficulty(self):
+        self.train(ProjectDifficultyData, ProjectDifficulty, project_difficulty_data_schema, 'project')
+
         return "project difficulty train success"
 
     def train_reading_workload(self):
