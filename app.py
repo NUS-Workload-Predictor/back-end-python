@@ -139,7 +139,7 @@ class Train(Resource):
     def get(self):
         self.train_assignment_workload()
 
-    def train(self, data_model, model, data_schema, type):
+    def train(self, data_model, model, data_schema, category):
         data_query = data_model.query.order_by(data_model.code.asc()).all()
 
         if not data_query:
@@ -153,7 +153,7 @@ class Train(Resource):
         for row in result:
             if row['code'] == current_module:
                 attr_list = []
-                for attr in self.attribute_dict[type]:
+                for attr in self.attribute_dict[category]:
                     attr_list.append(row[attr])
                 param_list.append(attr_list)
                 value_list.append(row['result'])
@@ -177,7 +177,7 @@ class Train(Resource):
                 value_list = []
                 linear_regression_model = linear_model.LinearRegression()
                 attr_list = []
-                for attr in self.attribute_dict[type]:
+                for attr in self.attribute_dict[category]:
                     attr_list.append(row[attr])
                 param_list.append(attr_list)
                 value_list.append(row['result'])
