@@ -572,6 +572,119 @@ class TestDifficultyDataSchema(ma.ModelSchema):
 
 test_difficulty_data_schema = TestDifficultyDataSchema(strict=True)
 
+
+########################################################################################################################
+########################################################################################################################
+
+# exam workload
+class ExamWorkload(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.intercept = attr_list[3]
+
+    def update(self, attr_list):
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.intercept = attr_list[3]
+
+
+class ExamWorkloadSchema(ma.ModelSchema):
+    class Meta:
+        model = ExamWorkload
+
+
+exam_workload_schema = ExamWorkloadSchema(strict=True)
+
+
+class ExamWorkloadResource(Resource):
+    def get(self, module_code):
+        exam_workload_query = ExamWorkload.query.filter_by(code=module_code).first()
+        result = exam_workload_schema.dump(exam_workload_query).data
+        return result
+
+
+api.add_resource(ExamWorkloadResource, '/workload/exam/<string:module_code>')
+
+
+# exam difficulty
+class ExamDifficulty(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+
+class ExamDifficultySchema(ma.ModelSchema):
+    class Meta:
+        model = ExamDifficulty
+
+
+exam_difficulty_schema = ExamDifficultySchema(strict=True)
+
+
+class ExamDifficultyResource(Resource):
+    def get(self, module_code):
+        exam_difficulty_query = ExamDifficulty.query.filter_by(code=module_code).first()
+        result = exam_difficulty_schema.dump(exam_difficulty_query).data
+        return result
+
+
+api.add_resource(ExamDifficultyResource, '/difficulty/exam/<string:module_code>')
+
+
+# exam workload data
+class ExamWorkloadData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class ExamWorkloadDataSchema(ma.ModelSchema):
+    class Meta:
+        model = ExamWorkloadData
+
+
+exam_workload_data_schema = ExamWorkloadDataSchema(strict=True)
+
+
+# exam difficulty data
+class ExamDifficultyData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    percentage = db.Column(db.Float)
+    coverage = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class ExamDifficultyDataSchema(ma.ModelSchema):
+    class Meta:
+        model = ExamDifficultyData
+
+
+exam_difficulty_data_schema = ExamDifficultyDataSchema(strict=True)
+
+
+########################################################################################################################
+########################################################################################################################
+
+
 db.create_all()
 
 
@@ -694,9 +807,13 @@ class Train(Resource):
         return "test difficulty train success"
 
     def train_exam_workload(self):
+        self.train(ExamWorkloadData, ExamWorkload, exam_workload_data_schema, 'exam')
+
         return "exam workload train success"
 
     def train_exam_difficulty(self):
+        self.train(ExamDifficultyData, ExamDifficulty, exam_difficulty_data_schema, 'exam')
+
         return "exam difficulty train success"
 
 
