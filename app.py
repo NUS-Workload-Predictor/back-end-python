@@ -4,8 +4,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_restful import Api, Resource
-import numpy
-import scipy
 from sklearn import linear_model
 
 app = Flask(__name__)
@@ -29,13 +27,20 @@ class AssignmentWorkload(db.Model):
     people = db.Column(db.Float)
     intercept = db.Column(db.Float)
 
-    def __init__(self, code, time, percentage, coverage, people, intercept):
+    def __init__(self, code, attr_list):
         self.code = code
-        self.time = time
-        self.percentage = percentage
-        self.coverage = coverage
-        self.people = people
-        self.intercept = intercept
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
+
+    def update(self, attr_list):
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.intercept = attr_list[4]
 
 
 class AssignmentWorkloadSchema(ma.ModelSchema):
@@ -124,62 +129,110 @@ db.create_all()
 
 
 class Train(Resource):
-    def get(self):
-        assignment_workload_data_query = AssignmentWorkloadData.query.order_by(AssignmentWorkloadData.code.asc()).all()
+    attribute_dict = dict(assignment=['time', 'percentage', 'coverage', 'people'],
+                          project=['time', 'percentage', 'coverage', 'people'],
+                          presentation=['time', 'percentage', 'coverage', 'people', 'duration'],
+                          reading=['amount', 'difficulty'],
+                          exam=['percentage', 'coverage', 'duration'],
+                          test=['percentage', 'coverage', 'duration'])
 
-        if not assignment_workload_data_query:
+    def get(self):
+        self.train_assignment_workload()
+
+    def train(self, data_model, model, data_schema, type):
+        data_query = data_model.query.order_by(data_model.code.asc()).all()
+
+        if not data_query:
             return
 
-        result = assignment_workload_data_schema.dump(assignment_workload_data_query, many=True).data
+        result = data_schema.dump(data_query, many=True).data
         current_module = result[0]['code']
         param_list = []
         value_list = []
-        model = linear_model.LinearRegression()
+        linear_regression_model = linear_model.LinearRegression()
         for row in result:
             if row['code'] == current_module:
-                param_list.append([row['time'], row['percentage'], row['coverage'], row['people']])
+                attr_list = []
+                for attr in self.attribute_dict[type]:
+                    attr_list.append(row[attr])
+                param_list.append(attr_list)
                 value_list.append(row['result'])
             else:
-                model.fit(param_list, value_list)
-                a = AssignmentWorkload.query.filter_by(code=current_module).first()
-                if not a:
-                    assignment_workload = AssignmentWorkload(current_module, model.coef_[0].item(),
-                                                             model.coef_[1].item(), model.coef_[2].item(),
-                                                             model.coef_[3].item(), model.intercept_.item())
-                    db.session.add(assignment_workload)
+                linear_regression_model.fit(param_list, value_list)
+                m = model.query.filter_by(code=current_module).first()
+                temp_list = []
+                for coefficient in linear_regression_model.coef_:
+                    temp_list.append(coefficient.item())
+                temp_list.append(linear_regression_model.intercept_.item())
+                if not m:
+                    m = model(current_module, temp_list)
+                    db.session.add(m)
                 else:
-                    a.time = model.coef_[0].item()
-                    a.percentage = model.coef_[1].item()
-                    a.coverage = model.coef_[2].item()
-                    a.people = model.coef_[3].item()
-                    a.intercept = model.intercept_.item()
+                    m.update(temp_list)
 
                 db.session.commit()
 
                 current_module = row['code']
                 param_list = []
                 value_list = []
-                model = linear_model.LinearRegression()
-                param_list.append([row['time'], row['percentage'], row['coverage'], row['people']])
+                linear_regression_model = linear_model.LinearRegression()
+                attr_list = []
+                for attr in self.attribute_dict[type]:
+                    attr_list.append(row[attr])
+                param_list.append(attr_list)
                 value_list.append(row['result'])
 
-        model.fit(param_list, value_list)
-        a = AssignmentWorkload.query.filter_by(code=current_module).first()
-        if not a:
-            assignment_workload = AssignmentWorkload(current_module, model.coef_[0].item(), model.coef_[1].item(),
-                                                     model.coef_[2].item(), model.coef_[3].item(),
-                                                     model.intercept_.item())
-            db.session.add(assignment_workload)
+        linear_regression_model.fit(param_list, value_list)
+        m = model.query.filter_by(code=current_module).first()
+        temp_list = []
+        for coefficient in linear_regression_model.coef_:
+            temp_list.append(coefficient.item())
+        temp_list.append(linear_regression_model.intercept_.item())
+        if not m:
+            m = model(current_module, temp_list)
+            db.session.add(m)
         else:
-            a.time = model.coef_[0].item()
-            a.percentage = model.coef_[1].item()
-            a.coverage = model.coef_[2].item()
-            a.people = model.coef_[3].item()
-            a.intercept = model.intercept_.item()
+            m.update(temp_list)
 
         db.session.commit()
 
-        return result
+    def train_assignment_workload(self):
+        self.train(AssignmentWorkloadData, AssignmentWorkload, assignment_workload_data_schema, 'assignment')
+
+        return 'assignment workload train success'
+
+    def train_assignment_difficulty(self):
+        return "assignment difficulty train success"
+
+    def train_presentation_workload(self):
+        return "presentation workload train success"
+
+    def train_presentation_difficulty(self):
+        return "presentation difficulty train success"
+
+    def train_project_workload(self):
+        return "project workload train success"
+
+    def train_project_difficulty(self):
+        return "project difficulty train success"
+
+    def train_reading_workload(self):
+        return "reading workload train success"
+
+    def train_reading_difficulty(self):
+        return "reading difficulty train success"
+
+    def train_test_workload(self):
+        return "test workload train success"
+
+    def train_test_difficulty(self):
+        return "test difficulty train success"
+
+    def train_exam_workload(self):
+        return "exam workload train success"
+
+    def train_exam_difficulty(self):
+        return "exam difficulty train success"
 
 
 api.add_resource(Train, '/train')
