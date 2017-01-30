@@ -781,8 +781,19 @@ class Train(Resource):
                           exam=['percentage', 'coverage', 'duration'],
                           test=['percentage', 'coverage', 'duration'])
 
-    def get(self):
+    def post(self):
         self.train_assignment_workload()
+        self.train_assignment_difficulty()
+        self.train_presentation_workload()
+        self.train_presentation_difficulty()
+        self.train_project_workload()
+        self.train_project_difficulty()
+        self.train_reading_workload()
+        self.train_reading_difficulty()
+        self.train_test_workload()
+        self.train_test_difficulty()
+        self.train_exam_workload()
+        self.train_exam_difficulty()
 
     def train(self, data_model, model, data_schema, category):
         data_query = data_model.query.order_by(data_model.code.asc()).all()
