@@ -363,6 +363,107 @@ class PresentationDifficultyDataSchema(ma.ModelSchema):
 presentation_difficulty_data_schema = PresentationDifficultyDataSchema(strict=True)
 
 
+########################################################################################################################
+########################################################################################################################
+
+# reading workload
+class ReadingWorkload(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    amount = db.Column(db.Float)
+    difficulty = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.amount = attr_list[0]
+        self.difficulty = attr_list[1]
+        self.intercept = attr_list[2]
+
+    def update(self, attr_list):
+        self.amount = attr_list[0]
+        self.difficulty = attr_list[1]
+        self.intercept = attr_list[2]
+
+
+class ReadingWorkloadSchema(ma.ModelSchema):
+    class Meta:
+        model = ReadingWorkload
+
+
+reading_workload_schema = ReadingWorkloadSchema(strict=True)
+
+
+class ReadingWorkloadResource(Resource):
+    def get(self, module_code):
+        reading_workload_query = ReadingWorkload.query.filter_by(code=module_code).first()
+        result = reading_workload_schema.dump(reading_workload_query).data
+        return result
+
+
+api.add_resource(ReadingWorkloadResource, '/workload/reading/<string:module_code>')
+
+
+# reading difficulty
+class ReadingDifficulty(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    amount = db.Column(db.Float)
+    difficulty = db.Column(db.Float)
+    intercept = db.Column(db.Float)
+
+
+class ReadingDifficultySchema(ma.ModelSchema):
+    class Meta:
+        model = ReadingDifficulty
+
+
+reading_difficulty_schema = ReadingDifficultySchema(strict=True)
+
+
+class ReadingDifficultyResource(Resource):
+    def get(self, module_code):
+        reading_difficulty_query = ReadingDifficulty.query.filter_by(code=module_code).first()
+        result = reading_difficulty_schema.dump(reading_difficulty_query).data
+        return result
+
+
+api.add_resource(ReadingDifficultyResource, '/difficulty/reading/<string:module_code>')
+
+
+# reading workload data
+class ReadingWorkloadData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    amount = db.Column(db.Float)
+    difficulty = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class ReadingWorkloadDataSchema(ma.ModelSchema):
+    class Meta:
+        model = ReadingWorkloadData
+
+
+reading_workload_data_schema = ReadingWorkloadDataSchema(strict=True)
+
+
+# reading difficulty data
+class ReadingDifficultyData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    amount = db.Column(db.Float)
+    difficulty = db.Column(db.Float)
+    result = db.Column(db.Float)
+
+
+class ReadingDifficultyDataSchema(ma.ModelSchema):
+    class Meta:
+        model = ReadingDifficultyData
+
+
+reading_difficulty_data_schema = ReadingDifficultyDataSchema(strict=True)
+
 db.create_all()
 
 
@@ -465,9 +566,13 @@ class Train(Resource):
         return "project difficulty train success"
 
     def train_reading_workload(self):
+        self.train(ReadingWorkloadData, ReadingWorkload, reading_workload_data_schema, 'reading')
+
         return "reading workload train success"
 
     def train_reading_difficulty(self):
+        self.train(ReadingDifficultyData, ReadingDifficulty, reading_difficulty_data_schema, 'reading')
+
         return "reading difficulty train success"
 
     def train_test_workload(self):
