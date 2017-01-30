@@ -445,9 +445,13 @@ class Train(Resource):
         return "assignment difficulty train success"
 
     def train_presentation_workload(self):
+        self.train(PresentationWorkloadData, PresentationWorkload, presentation_workload_data_schema, 'presentation')
+
         return "presentation workload train success"
 
     def train_presentation_difficulty(self):
+        self.train(PresentationDifficultyData, PresentationDifficulty, presentation_difficulty_data_schema, 'presentation')
+
         return "presentation difficulty train success"
 
     def train_project_workload(self):
