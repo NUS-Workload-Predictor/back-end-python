@@ -6,6 +6,9 @@ from flask_marshmallow import Marshmallow
 from flask_restful import Api, Resource
 from sklearn import linear_model
 
+import warnings
+warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1:3306/nusworks'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
