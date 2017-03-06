@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_restful import Api, Resource
+from flask_cors import CORS
 from sklearn import linear_model
+import re
+import json
 
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
@@ -15,6 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 api = Api(app)
+CORS(app, origins='*')
 
 
 @app.route('/')
@@ -58,9 +62,9 @@ assignment_workload_schema = AssignmentWorkloadSchema(strict=True)
 
 class AssignmentWorkloadResource(Resource):
     def get(self, module_code):
-        assignment_workload_query = AssignmentWorkload.query.filter_by(code=module_code).first()
+        assignment_workload_query = AssignmentWorkload.query.filter_by(code=module_code.lower()).first()
         result = assignment_workload_schema.dump(assignment_workload_query).data
-        return result
+        return jsonify(result)
 
 
 api.add_resource(AssignmentWorkloadResource, '/workload/assignment/<string:module_code>')
@@ -917,6 +921,131 @@ class Train(Resource):
 
 
 api.add_resource(Train, '/train')
+
+
+class Data(Resource):
+    module_code_pattern = re.compile('^[a-z]{2,3}[0-9]{4}[a-z]?$')
+
+    def get(self, category, assessment, module_code):
+        if category != 'workload' and category != 'difficulty':
+            return 'error category'
+
+        if assessment != 'assignment' and assessment != 'project' and assessment != 'presentation' \
+                and assessment != 'reading' and assessment != 'test' and assessment != 'exam':
+            return 'error type'
+
+        if not self.module_code_pattern.match(module_code):
+            return 'error module code'
+
+        return category + assessment + module_code
+
+    def post(self, category, assessment, module_code):
+        if category != 'workload' and category != 'difficulty':
+            return 'error category'
+
+        if assessment != 'assignment' and assessment != 'project' and assessment != 'presentation' \
+                and assessment != 'reading' and assessment != 'test' and assessment != 'exam':
+            return 'error type'
+
+        if not self.module_code_pattern.match(module_code):
+            return 'error module code'
+
+        if assessment == 'assignment':
+            if category == 'workload':
+                self.update_assignment_workload_data(module_code, request.form)
+            elif category == 'difficulty':
+                self.update_assignment_difficulty_data(module_code, request.form)
+        elif assessment == 'project':
+            if category == 'workload':
+                self.update_project_workload_data(module_code, request.form)
+            elif category == 'difficulty':
+                self.update_project_difficulty_data(module_code, request.form)
+        elif assessment == 'presentation':
+            if category == 'workload':
+                self.update_presentation_workload_data(module_code, request.form)
+            elif category == 'difficulty':
+                self.update_presentation_difficulty_data(module_code, request.form)
+        elif assessment == 'reading':
+            if category == 'workload':
+                self.update_reading_workload_data(module_code, request.form)
+            elif category == 'difficulty':
+                self.update_reading_difficulty_data(module_code, request.form)
+        elif assessment == 'test':
+            if category == 'workload':
+                self.update_test_workload_data(module_code, request.form)
+            elif category == 'difficulty':
+                self.update_test_difficulty_data(module_code, request.form)
+        elif assessment == 'exam':
+            if category == 'workload':
+                self.update_exam_workload_data(module_code, request.form)
+            elif category == 'difficulty':
+                self.update_exam_difficulty_data(module_code, request.form)
+
+    def update_data(self, data_model, data_schema, category, assessment, module_code, data):
+        m = model(current_module, temp_list)
+
+    def update_assignment_workload_data(self, module_code, data):
+        self.update_data(AssignmentWorkloadData, assignment_workload_data_schema, 'workload', 'assignment', module_code, data)
+
+        return 'update assignment workload data success'
+
+    def update_assignment_difficulty_data(self, module_code, data):
+        self.update_data(AssignmentDifficultyData, assignment_difficulty_data_schema, 'difficulty', 'assignment', module_code, data)
+
+        return 'update assignment difficulty data success'
+
+    def update_project_workload_data(self, module_code, data):
+        self.update_data(ProjectWorkloadData, project_workload_data_schema, 'workload', 'project', module_code, data)
+
+        return 'update project workload data success'
+
+    def update_project_difficulty_data(self, module_code, data):
+        self.update_data(ProjectDifficultyData, project_difficulty_data_schema, 'difficulty', 'project', module_code, data)
+
+        return 'update project difficulty data success'
+
+    def update_presentation_workload_data(self, module_code, data):
+        self.update_data(PresentationWorkloadData, presentation_workload_data_schema, 'workload', 'presentation', module_code, data)
+
+        return 'update presentation workload data success'
+
+    def update_presentation_difficulty_data(self, module_code, data):
+        self.update_data(PresentationDifficultyData, presentation_difficulty_data_schema, 'difficulty', 'presentation', module_code, data)
+
+        return 'update presentation difficulty data success'
+
+    def update_reading_workload_data(self, module_code, data):
+        self.update_data(ReadingWorkloadData, reading_workload_data_schema, 'workload', 'reading', module_code, data)
+
+        return 'update reading workload data success'
+
+    def update_reading_difficulty_data(self, module_code, data):
+        self.update_data(ReadingDifficultyData, reading_difficulty_data_schema, 'difficulty', 'reading', module_code, data)
+
+        return 'update reading difficulty data success'
+
+    def update_test_workload_data(self, module_code, data):
+        self.update_data(TestWorkloadData, test_workload_data_schema, 'workload', 'test', module_code, data)
+
+        return 'update test workload data success'
+
+    def update_test_difficulty_data(self, module_code, data):
+        self.update_data(TestDifficultyData, test_difficulty_data_schema, 'difficulty', 'test', module_code, data)
+
+        return 'update test difficulty data success'
+
+    def update_exam_workload_data(self, module_code, data):
+        self.update_data(ExamWorkloadData, exam_workload_data_schema, 'workload', 'exam', module_code, data)
+
+        return 'update exam workload data success'
+
+    def update_exam_difficulty_data(self, module_code, data):
+        self.update_data(ExamDifficultyData, exam_difficulty_data_schema, 'difficulty', 'exam', module_code, data)
+
+        return 'update exam difficulty data success'
+
+
+api.add_resource(Data, '/data/<string:category>/<string:assessment>/<string:module_code>')
 
 
 if __name__ == '__main__':
