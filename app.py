@@ -7,7 +7,6 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 from sklearn import linear_model
 import re
-import json
 
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
@@ -124,6 +123,14 @@ class AssignmentWorkloadData(db.Model):
     people = db.Column(db.Float)
     result = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.result = attr_list[4]
+
 
 class AssignmentWorkloadDataSchema(ma.ModelSchema):
     class Meta:
@@ -142,6 +149,14 @@ class AssignmentDifficultyData(db.Model):
     coverage = db.Column(db.Float)
     people = db.Column(db.Float)
     result = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.result = attr_list[4]
 
 
 class AssignmentDifficultyDataSchema(ma.ModelSchema):
@@ -253,6 +268,14 @@ class ProjectWorkloadData(db.Model):
     people = db.Column(db.Float)
     result = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.result = attr_list[4]
+
 
 class ProjectWorkloadDataSchema(ma.ModelSchema):
     class Meta:
@@ -271,6 +294,14 @@ class ProjectDifficultyData(db.Model):
     coverage = db.Column(db.Float)
     people = db.Column(db.Float)
     result = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.result = attr_list[4]
 
 
 class ProjectDifficultyDataSchema(ma.ModelSchema):
@@ -389,6 +420,15 @@ class PresentationWorkloadData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.duration = attr_list[4]
+        self.result = attr_list[5]
+
 
 class PresentationWorkloadDataSchema(ma.ModelSchema):
     class Meta:
@@ -408,6 +448,15 @@ class PresentationDifficultyData(db.Model):
     people = db.Column(db.Float)
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.time = attr_list[0]
+        self.percentage = attr_list[1]
+        self.coverage = attr_list[2]
+        self.people = attr_list[3]
+        self.duration = attr_list[4]
+        self.result = attr_list[5]
 
 
 class PresentationDifficultyDataSchema(ma.ModelSchema):
@@ -505,6 +554,12 @@ class ReadingWorkloadData(db.Model):
     difficulty = db.Column(db.Float)
     result = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.amount = attr_list[0]
+        self.difficulty = attr_list[1]
+        self.result = attr_list[2]
+
 
 class ReadingWorkloadDataSchema(ma.ModelSchema):
     class Meta:
@@ -521,6 +576,12 @@ class ReadingDifficultyData(db.Model):
     amount = db.Column(db.Float)
     difficulty = db.Column(db.Float)
     result = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.amount = attr_list[0]
+        self.difficulty = attr_list[1]
+        self.result = attr_list[2]
 
 
 class ReadingDifficultyDataSchema(ma.ModelSchema):
@@ -625,6 +686,13 @@ class TestWorkloadData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.result = attr_list[3]
+
 
 class TestWorkloadDataSchema(ma.ModelSchema):
     class Meta:
@@ -642,6 +710,13 @@ class TestDifficultyData(db.Model):
     coverage = db.Column(db.Float)
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.result = attr_list[3]
 
 
 class TestDifficultyDataSchema(ma.ModelSchema):
@@ -746,6 +821,13 @@ class ExamWorkloadData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.result = attr_list[3]
+
 
 class ExamWorkloadDataSchema(ma.ModelSchema):
     class Meta:
@@ -763,6 +845,13 @@ class ExamDifficultyData(db.Model):
     coverage = db.Column(db.Float)
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
+
+    def __init__(self, code, attr_list):
+        self.code = code
+        self.percentage = attr_list[0]
+        self.coverage = attr_list[1]
+        self.duration = attr_list[2]
+        self.result = attr_list[3]
 
 
 class ExamDifficultyDataSchema(ma.ModelSchema):
