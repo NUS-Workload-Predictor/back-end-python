@@ -1023,6 +1023,8 @@ class Data(Resource):
                                test=['percentage', 'coverage', 'duration', 'result'])
 
     def get(self, category, assessment, module_code):
+        module_code = module_code.lower()
+
         if category != 'workload' and category != 'difficulty':
             return 'error category'
 
@@ -1038,6 +1040,8 @@ class Data(Resource):
         return category + assessment + module_code
 
     def post(self, category, assessment, module_code):
+        module_code = module_code.lower()
+
         if category != 'workload' and category != 'difficulty':
             return 'error category'
 
