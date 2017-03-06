@@ -123,13 +123,13 @@ class AssignmentWorkloadData(db.Model):
     people = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.result = attr_list[4]
+        self.time = attr_dict['time']
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.people = attr_dict['people']
+        self.result = attr_dict['result']
 
 
 class AssignmentWorkloadDataSchema(ma.ModelSchema):
@@ -150,13 +150,13 @@ class AssignmentDifficultyData(db.Model):
     people = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.result = attr_list[4]
+        self.time = attr_dict['time']
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.people = attr_dict['people']
+        self.result = attr_dict['result']
 
 
 class AssignmentDifficultyDataSchema(ma.ModelSchema):
@@ -268,13 +268,13 @@ class ProjectWorkloadData(db.Model):
     people = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.result = attr_list[4]
+        self.time = attr_dict['time']
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.people = attr_dict['people']
+        self.result = attr_dict['result']
 
 
 class ProjectWorkloadDataSchema(ma.ModelSchema):
@@ -295,13 +295,13 @@ class ProjectDifficultyData(db.Model):
     people = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.result = attr_list[4]
+        self.time = attr_dict['time']
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.people = attr_dict['people']
+        self.result = attr_dict['result']
 
 
 class ProjectDifficultyDataSchema(ma.ModelSchema):
@@ -420,14 +420,14 @@ class PresentationWorkloadData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.duration = attr_list[4]
-        self.result = attr_list[5]
+        self.time = attr_dict['time']
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.people = attr_dict['people']
+        self.duration = attr_dict['duration']
+        self.result = attr_dict['result']
 
 
 class PresentationWorkloadDataSchema(ma.ModelSchema):
@@ -449,14 +449,14 @@ class PresentationDifficultyData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.duration = attr_list[4]
-        self.result = attr_list[5]
+        self.time = attr_dict['time']
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.people = attr_dict['people']
+        self.duration = attr_dict['duration']
+        self.result = attr_dict['result']
 
 
 class PresentationDifficultyDataSchema(ma.ModelSchema):
@@ -554,11 +554,11 @@ class ReadingWorkloadData(db.Model):
     difficulty = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.result = attr_list[2]
+        self.amount = attr_dict['amount']
+        self.difficulty = attr_dict['difficulty']
+        self.result = attr_dict['result']
 
 
 class ReadingWorkloadDataSchema(ma.ModelSchema):
@@ -577,11 +577,11 @@ class ReadingDifficultyData(db.Model):
     difficulty = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.result = attr_list[2]
+        self.amount = attr_dict['amount']
+        self.difficulty = attr_dict['difficulty']
+        self.result = attr_dict['result']
 
 
 class ReadingDifficultyDataSchema(ma.ModelSchema):
@@ -686,12 +686,12 @@ class TestWorkloadData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.result = attr_list[3]
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.duration = attr_dict['duration']
+        self.result = attr_dict['result']
 
 
 class TestWorkloadDataSchema(ma.ModelSchema):
@@ -711,12 +711,12 @@ class TestDifficultyData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.result = attr_list[3]
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.duration = attr_dict['duration']
+        self.result = attr_dict['result']
 
 
 class TestDifficultyDataSchema(ma.ModelSchema):
@@ -821,12 +821,12 @@ class ExamWorkloadData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.result = attr_list[3]
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.duration = attr_dict['duration']
+        self.result = attr_dict['result']
 
 
 class ExamWorkloadDataSchema(ma.ModelSchema):
@@ -846,12 +846,12 @@ class ExamDifficultyData(db.Model):
     duration = db.Column(db.Float)
     result = db.Column(db.Float)
 
-    def __init__(self, code, attr_list):
+    def __init__(self, code, attr_dict):
         self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.result = attr_list[3]
+        self.percentage = attr_dict['percentage']
+        self.coverage = attr_dict['coverage']
+        self.duration = attr_dict['duration']
+        self.result = attr_dict['result']
 
 
 class ExamDifficultyDataSchema(ma.ModelSchema):
@@ -1071,7 +1071,7 @@ class Data(Resource):
                 self.update_exam_difficulty_data(module_code, request.form)
 
     def update_data(self, data_model, data_schema, category, assessment, module_code, data):
-        print()
+        m = data_model()
 
     def update_assignment_workload_data(self, module_code, data):
         self.update_data(AssignmentWorkloadData, assignment_workload_data_schema, 'workload', 'assignment', module_code, data)
