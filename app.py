@@ -1071,7 +1071,7 @@ class Data(Resource):
                 self.update_exam_difficulty_data(module_code, request.form)
 
     def update_data(self, data_model, data_schema, category, assessment, module_code, data):
-        m = model(current_module, temp_list)
+        print()
 
     def update_assignment_workload_data(self, module_code, data):
         self.update_data(AssignmentWorkloadData, assignment_workload_data_schema, 'workload', 'assignment', module_code, data)
