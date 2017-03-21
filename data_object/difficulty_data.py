@@ -6,6 +6,7 @@ class DifficultySimpleData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10))
     level = db.Column(db.Float)
+    mc = db.Column(db.Float)
     lecture = db.Column(db.Float)
     tutorial = db.Column(db.Float)
     lab = db.Column(db.Float)
@@ -16,6 +17,7 @@ class DifficultySimpleData(db.Model):
     def __init__(self, code, attr_dict):
         self.code = code
         self.level = attr_dict['level']
+        self.mc = attr_dict['mc']
         self.lecture = attr_dict['lecture']
         self.tutorial = attr_dict['tutorial']
         self.lab = attr_dict['lab']
@@ -37,6 +39,7 @@ class DifficultyComplexData(db.Model):
     semesters = db.Column(db.Float)
     credits = db.Column(db.Float)
     level = db.Column(db.Float)
+    mc = db.Column(db.Float)
     lecture = db.Column(db.Float)
     tutorial = db.Column(db.Float)
     lab = db.Column(db.Float)
@@ -50,6 +53,7 @@ class DifficultyComplexData(db.Model):
         self.semesters = attr_dict['semesters']
         self.credits = attr_dict['credits']
         self.level = attr_dict['level']
+        self.mc = attr_dict['mc']
         self.lecture = attr_dict['lecture']
         self.tutorial = attr_dict['tutorial']
         self.lab = attr_dict['lab']
