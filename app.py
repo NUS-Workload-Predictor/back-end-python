@@ -7,7 +7,6 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 from sklearn import linear_model
 import re
-
 import warnings
 
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
