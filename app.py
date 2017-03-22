@@ -5,7 +5,6 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 from sklearn import linear_model
 import re
-import json
 import warnings
 
 from object.assignment import AssignmentWorkloadSimpleResource, AssignmentWorkloadComplexResource, AssignmentWorkloadSimple, AssignmentWorkloadComplex
