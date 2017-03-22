@@ -21,6 +21,9 @@ class PresentationWorkloadSimpleData(db.Model):
         self.duration = attr_dict['duration']
         self.result = attr_dict['result']
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class PresentationWorkloadSimpleDataSchema(ma.ModelSchema):
     class Meta:
@@ -52,6 +55,9 @@ class PresentationWorkloadComplexData(db.Model):
         self.people = attr_dict['people']
         self.duration = attr_dict['duration']
         self.result = attr_dict['result']
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class PresentationWorkloadComplexDataSchema(ma.ModelSchema):

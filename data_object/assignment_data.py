@@ -19,6 +19,9 @@ class AssignmentWorkloadSimpleData(db.Model):
         self.people = attr_dict['people']
         self.result = attr_dict['result']
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class AssignmentWorkloadSimpleDataSchema(ma.ModelSchema):
     class Meta:
@@ -48,6 +51,9 @@ class AssignmentWorkloadComplexData(db.Model):
         self.coverage = attr_dict['coverage']
         self.people = attr_dict['people']
         self.result = attr_dict['result']
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class AssignmentWorkloadComplexDataSchema(ma.ModelSchema):

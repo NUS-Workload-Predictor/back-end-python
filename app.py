@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request
+from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from sklearn import linear_model
 import re
+import json
 import warnings
 
 from object.assignment import AssignmentWorkloadSimpleResource, AssignmentWorkloadComplexResource, AssignmentWorkloadSimple, AssignmentWorkloadComplex
@@ -274,19 +275,54 @@ class Data(Resource):
     def get(self, category, assessment, module_code):
         module_code = module_code.lower()
 
-        if category != 'workload' and category != 'difficulty':
+        if category != 'simple' and category != 'complex':
             return 'error category'
 
         if assessment != 'assignment' and assessment != 'project' and assessment != 'presentation' \
-                and assessment != 'reading' and assessment != 'test' and assessment != 'exam':
+                and assessment != 'reading' and assessment != 'test' and assessment != 'exam' and assessment != 'difficulty':
             return 'error type'
 
         if not self.module_code_pattern.match(module_code):
             return 'error module code'
 
-        # TODO
+        if assessment == 'assignment':
+            if category == 'simple':
+                result = self.get_assignment_workload_simple_data(module_code)
+            elif category == 'complex':
+                result = self.get_assignment_workload_complex_data(module_code)
+        elif assessment == 'project':
+            if category == 'simple':
+                result = self.get_project_workload_simple_data(module_code)
+            elif category == 'complex':
+                result = self.get_project_workload_complex_data(module_code)
+        elif assessment == 'presentation':
+            if category == 'simple':
+                result = self.get_presentation_workload_simple_data(module_code)
+            elif category == 'complex':
+                result = self.get_presentation_workload_complex_data(module_code)
+        elif assessment == 'reading':
+            if category == 'simple':
+                result = self.get_reading_workload_simple_data(module_code)
+            elif category == 'complex':
+                result = self.get_reading_workload_complex_data(module_code)
+        elif assessment == 'test':
+            if category == 'simple':
+                result = self.get_test_workload_simple_data(module_code)
+            elif category == 'complex':
+                result = self.get_test_workload_complex_data(module_code)
+        elif assessment == 'exam':
+            if category == 'simple':
+                result = self.get_exam_workload_simple_data(module_code)
+            elif category == 'complex':
+                result = self.get_exam_workload_complex_data(module_code)
+        elif assessment == 'difficulty':
+            if category == 'simple':
+                result = self.get_difficulty_simple_data(module_code)
+            elif category == 'complex':
+                result = self.get_difficulty_complex_data(module_code)
 
-        return category + assessment + module_code
+        result = list(map(lambda x: x.as_dict(), result))
+        return jsonify(result)
 
     def post(self, category, assessment, module_code):
         module_code = module_code.lower()
@@ -295,7 +331,7 @@ class Data(Resource):
             return 'error category'
 
         if assessment != 'assignment' and assessment != 'project' and assessment != 'presentation' \
-                and assessment != 'reading' and assessment != 'test' and assessment != 'exam':
+                and assessment != 'reading' and assessment != 'test' and assessment != 'exam' and assessment != 'difficulty':
             return 'error type'
 
         if not self.module_code_pattern.match(module_code):
@@ -337,7 +373,10 @@ class Data(Resource):
             elif category == 'complex':
                 result = self.update_difficulty_complex_data(module_code, request.form)
 
-        return result
+        return jsonify(result)
+
+    def get_data(self, data_model, module_code):
+        return data_model.query.filter_by(code=module_code).all()
 
     def update_data(self, data_model, assessment, module_code, data):
         for attr in self.data_attribute_dict[assessment]:
@@ -350,6 +389,50 @@ class Data(Resource):
 
         return 'update ' + assessment + ' for ' + module_code + ' success'
 
+    # get
+    def get_assignment_workload_simple_data(self, module_code):
+        return self.get_data(AssignmentWorkloadSimpleData, module_code)
+
+    def get_assignment_workload_complex_data(self, module_code):
+        return self.get_data(AssignmentWorkloadComplexData, module_code)
+
+    def get_project_workload_simple_data(self, module_code):
+        return self.get_data(ProjectWorkloadSimpleData, module_code)
+
+    def get_project_workload_complex_data(self, module_code):
+        return self.get_data(ProjectWorkloadComplexData, module_code)
+
+    def get_presentation_workload_simple_data(self, module_code):
+        return self.get_data(PresentationWorkloadSimpleData, module_code)
+
+    def get_presentation_workload_complex_data(self, module_code):
+        return self.get_data(PresentationWorkloadComplexData, module_code)
+
+    def get_reading_workload_simple_data(self, module_code):
+        return self.get_data(ReadingWorkloadSimpleData, module_code)
+
+    def get_reading_workload_complex_data(self, module_code):
+        return self.get_data(ReadingWorkloadComplexData, module_code)
+
+    def get_test_workload_simple_data(self, module_code):
+        return self.get_data(TestWorkloadSimpleData, module_code)
+
+    def get_test_workload_complex_data(self, module_code):
+        return self.get_data(TestWorkloadComplexData, module_code)
+
+    def get_exam_workload_simple_data(self, module_code):
+        return self.get_data(ExamWorkloadSimpleData, module_code)
+
+    def get_exam_workload_complex_data(self, module_code):
+        return self.get_data(ExamWorkloadComplexData, module_code)
+
+    def get_difficulty_simple_data(self, module_code):
+        return self.get_data(DifficultySimpleData, module_code)
+
+    def get_difficulty_complex_data(self, module_code):
+        return self.get_data(DifficultyComplexData, module_code)
+
+    # update
     def update_assignment_workload_simple_data(self, module_code, data):
         return self.update_data(AssignmentWorkloadSimpleData, 'assignment_simple', module_code, data)
 

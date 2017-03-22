@@ -25,6 +25,9 @@ class DifficultySimpleData(db.Model):
         self.preparation = attr_dict['preparation']
         self.result = attr_dict['result']
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class DifficultySimpleDataSchema(ma.ModelSchema):
     class Meta:
@@ -60,6 +63,9 @@ class DifficultyComplexData(db.Model):
         self.project = attr_dict['project']
         self.preparation = attr_dict['preparation']
         self.result = attr_dict['result']
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class DifficultyComplexDataSchema(ma.ModelSchema):

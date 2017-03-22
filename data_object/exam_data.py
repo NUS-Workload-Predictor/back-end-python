@@ -17,6 +17,9 @@ class ExamWorkloadSimpleData(db.Model):
         self.duration = attr_dict['duration']
         self.result = attr_dict['result']
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class ExamWorkloadSimpleDataSchema(ma.ModelSchema):
     class Meta:
@@ -44,6 +47,9 @@ class ExamWorkloadComplexData(db.Model):
         self.coverage = attr_dict['coverage']
         self.duration = attr_dict['duration']
         self.result = attr_dict['result']
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class ExamWorkloadComplexDataSchema(ma.ModelSchema):

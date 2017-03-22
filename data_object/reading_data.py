@@ -15,6 +15,9 @@ class ReadingWorkloadSimpleData(db.Model):
         self.difficulty = attr_dict['difficulty']
         self.result = attr_dict['result']
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class ReadingWorkloadSimpleDataSchema(ma.ModelSchema):
     class Meta:
@@ -40,6 +43,9 @@ class ReadingWorkloadComplexData(db.Model):
         self.amount = attr_dict['amount']
         self.difficulty = attr_dict['difficulty']
         self.result = attr_dict['result']
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class ReadingWorkloadComplexDataSchema(ma.ModelSchema):
