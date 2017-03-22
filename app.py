@@ -30,7 +30,9 @@ warnings.filterwarnings(action="ignore", module="scipy", message="^internal gels
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1:3306/nusworks'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db.app = app
 db.init_app(app)
+ma.app = app
 ma.init_app(app)
 api = Api(app)
 CORS(app, origins='*')
@@ -289,7 +291,7 @@ class Data(Resource):
     def post(self, category, assessment, module_code):
         module_code = module_code.lower()
 
-        if category != 'workload' and category != 'difficulty':
+        if category != 'simple' and category != 'complex':
             return 'error category'
 
         if assessment != 'assignment' and assessment != 'project' and assessment != 'presentation' \
