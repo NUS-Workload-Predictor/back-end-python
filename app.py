@@ -1,21 +1,37 @@
 #!/usr/bin/env python3
 
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+from flask import Flask, request
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from sklearn import linear_model
 import re
 import warnings
 
+from object.assignment import AssignmentWorkloadSimpleResource, AssignmentWorkloadComplexResource, AssignmentWorkloadSimple, AssignmentWorkloadComplex
+from object.presentation import PresentationWorkloadSimpleResource, PresentationWorkloadComplexResource, PresentationWorkloadSimple, PresentationWorkloadComplex
+from object.project import ProjectWorkloadSimpleResource, ProjectWorkloadComplexResource, ProjectWorkloadSimple, ProjectWorkloadComplex
+from object.reading import ReadingWorkloadSimpleResource, ReadingWorkloadComplexResource, ReadingWorkloadSimple, ReadingWorkloadComplex
+from object.test import TestWorkloadSimpleResource, TestWorkloadComplexResource, TestWorkloadSimple, TestWorkloadComplex
+from object.exam import ExamWorkloadSimpleResource, ExamWorkloadComplexResource, ExamWorkloadSimple, ExamWorkloadComplex
+from object.difficulty import DifficultySimpleResource, DifficultyComplexResource, DifficultySimple, DifficultyComplex
+
+from data_object.assignment_data import AssignmentWorkloadSimpleDataSchema, AssignmentWorkloadComplexDataSchema, AssignmentWorkloadSimpleData, AssignmentWorkloadComplexData
+from data_object.presentation_data import PresentationWorkloadSimpleDataSchema, PresentationWorkloadComplexDataSchema, PresentationWorkloadSimpleData, PresentationWorkloadComplexData
+from data_object.project_data import ProjectWorkloadSimpleDataSchema, ProjectWorkloadComplexDataSchema, ProjectWorkloadSimpleData, ProjectWorkloadComplexData
+from data_object.reading_data import ReadingWorkloadSimpleDataSchema, ReadingWorkloadComplexDataSchema, ReadingWorkloadSimpleData, ReadingWorkloadComplexData
+from data_object.test_data import TestWorkloadSimpleDataSchema, TestWorkloadComplexDataSchema, TestWorkloadSimpleData, TestWorkloadComplexData
+from data_object.exam_data import ExamWorkloadSimpleDataSchema, ExamWorkloadComplexDataSchema, ExamWorkloadSimpleData, ExamWorkloadComplexData
+from data_object.difficulty_data import DifficultySimpleDataSchema, DifficultyComplexDataSchema, DifficultySimpleData, DifficultyComplexData
+
+from common import db, ma
+
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1:3306/nusworks'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
+db.init_app(app)
+ma.init_app(app)
 api = Api(app)
 CORS(app, origins='*')
 
@@ -24,842 +40,42 @@ CORS(app, origins='*')
 def index():
     return 'Hello World!'
 
+# simple
+api.add_resource(AssignmentWorkloadSimpleResource, '/workload/assignment/simple/<string:module_code>')
+api.add_resource(PresentationWorkloadSimpleResource, '/workload/presentation/simple/<string:module_code>')
+api.add_resource(ProjectWorkloadSimpleResource, '/workload/project/simple/<string:module_code>')
+api.add_resource(ReadingWorkloadSimpleResource, '/workload/reading/simple/<string:module_code>')
+api.add_resource(TestWorkloadSimpleResource, '/workload/test/simple/<string:module_code>')
+api.add_resource(ExamWorkloadSimpleResource, '/workload/exam/simple/<string:module_code>')
+api.add_resource(DifficultySimpleResource, '/workload/difficulty/simple/<string:module_code>')
+
+# complex
+api.add_resource(AssignmentWorkloadComplexResource, '/workload/assignment/complex/<string:module_code>')
+api.add_resource(PresentationWorkloadComplexResource, '/workload/presentation/complex/<string:module_code>')
+api.add_resource(ProjectWorkloadComplexResource, '/workload/project/complex/<string:module_code>')
+api.add_resource(ReadingWorkloadComplexResource, '/workload/reading/complex/<string:module_code>')
+api.add_resource(TestWorkloadComplexResource, '/workload/test/complex/<string:module_code>')
+api.add_resource(ExamWorkloadComplexResource, '/workload/exam/complex/<string:module_code>')
+api.add_resource(DifficultyComplexResource, '/workload/difficulty/complex/<string:module_code>')
+
+# data schema simple
+assignment_workload_simple_data_schema = AssignmentWorkloadSimpleDataSchema(strict=True)
+presentation_workload_simple_data_schema = PresentationWorkloadSimpleDataSchema(strict=True)
+project_workload_simple_data_schema = ProjectWorkloadSimpleDataSchema(strict=True)
+reading_workload_simple_data_schema = ReadingWorkloadSimpleDataSchema(strict=True)
+test_workload_simple_data_schema = TestWorkloadSimpleDataSchema(strict=True)
+exam_workload_simple_data_schema = ExamWorkloadSimpleDataSchema(strict=True)
+difficulty_simple_data_schema = DifficultySimpleDataSchema(strict=True)
+
+# data schema complex
+assignment_workload_complex_data_schema = AssignmentWorkloadComplexDataSchema(strict=True)
+presentation_workload_complex_data_schema = PresentationWorkloadComplexDataSchema(strict=True)
+project_workload_complex_data_schema = ProjectWorkloadComplexDataSchema(strict=True)
+reading_workload_complex_data_schema = ReadingWorkloadComplexDataSchema(strict=True)
+test_workload_complex_data_schema = TestWorkloadComplexDataSchema(strict=True)
+exam_workload_complex_data_schema = ExamWorkloadComplexDataSchema(strict=True)
+difficulty_complex_data_schema = DifficultyComplexDataSchema(strict=True)
 
-# assignment workload
-class AssignmentWorkload(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-    def update(self, attr_list):
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-
-class AssignmentWorkloadSchema(ma.ModelSchema):
-    class Meta:
-        model = AssignmentWorkload
-
-
-assignment_workload_schema = AssignmentWorkloadSchema(strict=True)
-
-
-class AssignmentWorkloadResource(Resource):
-    def get(self, module_code):
-        assignment_workload_query = AssignmentWorkload.query.filter_by(code=module_code.lower()).first()
-        result = assignment_workload_schema.dump(assignment_workload_query).data
-        return jsonify(result)
-
-
-api.add_resource(AssignmentWorkloadResource, '/workload/assignment/<string:module_code>')
-
-
-# assignment difficulty
-class AssignmentDifficulty(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-    def update(self, attr_list):
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-
-class AssignmentDifficultySchema(ma.ModelSchema):
-    class Meta:
-        model = AssignmentDifficulty
-
-
-assignment_difficulty_schema = AssignmentDifficultySchema(strict=True)
-
-
-class AssignmentDifficultyResource(Resource):
-    def get(self, module_code):
-        assignment_difficulty_query = AssignmentDifficulty.query.filter_by(code=module_code).first()
-        result = assignment_difficulty_schema.dump(assignment_difficulty_query).data
-        return result
-
-
-api.add_resource(AssignmentDifficultyResource, '/difficulty/assignment/<string:module_code>')
-
-
-# assignment workload data
-class AssignmentWorkloadData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.time = attr_dict['time']
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.people = attr_dict['people']
-        self.result = attr_dict['result']
-
-
-class AssignmentWorkloadDataSchema(ma.ModelSchema):
-    class Meta:
-        model = AssignmentWorkloadData
-
-
-assignment_workload_data_schema = AssignmentWorkloadDataSchema(strict=True)
-
-
-# assignment difficulty data
-class AssignmentDifficultyData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.time = attr_dict['time']
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.people = attr_dict['people']
-        self.result = attr_dict['result']
-
-
-class AssignmentDifficultyDataSchema(ma.ModelSchema):
-    class Meta:
-        model = AssignmentDifficultyData
-
-
-assignment_difficulty_data_schema = AssignmentDifficultyDataSchema(strict=True)
-
-
-########################################################################################################################
-########################################################################################################################
-
-# project workload
-class ProjectWorkload(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-    def update(self, attr_list):
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-
-class ProjectWorkloadSchema(ma.ModelSchema):
-    class Meta:
-        model = ProjectWorkload
-
-
-project_workload_schema = ProjectWorkloadSchema(strict=True)
-
-
-class ProjectWorkloadResource(Resource):
-    def get(self, module_code):
-        project_workload_query = ProjectWorkload.query.filter_by(code=module_code).first()
-        result = project_workload_schema.dump(project_workload_query).data
-        return result
-
-
-api.add_resource(ProjectWorkloadResource, '/workload/project/<string:module_code>')
-
-
-# project difficulty
-class ProjectDifficulty(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-    def update(self, attr_list):
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.intercept = attr_list[4]
-
-
-class ProjectDifficultySchema(ma.ModelSchema):
-    class Meta:
-        model = ProjectDifficulty
-
-
-project_difficulty_schema = ProjectDifficultySchema(strict=True)
-
-
-class ProjectDifficultyResource(Resource):
-    def get(self, module_code):
-        project_difficulty_query = ProjectDifficulty.query.filter_by(code=module_code).first()
-        result = project_difficulty_schema.dump(project_difficulty_query).data
-        return result
-
-
-api.add_resource(ProjectDifficultyResource, '/difficulty/project/<string:module_code>')
-
-
-# project workload data
-class ProjectWorkloadData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.time = attr_dict['time']
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.people = attr_dict['people']
-        self.result = attr_dict['result']
-
-
-class ProjectWorkloadDataSchema(ma.ModelSchema):
-    class Meta:
-        model = ProjectWorkloadData
-
-
-project_workload_data_schema = ProjectWorkloadDataSchema(strict=True)
-
-
-# project difficulty data
-class ProjectDifficultyData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.time = attr_dict['time']
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.people = attr_dict['people']
-        self.result = attr_dict['result']
-
-
-class ProjectDifficultyDataSchema(ma.ModelSchema):
-    class Meta:
-        model = ProjectDifficultyData
-
-
-project_difficulty_data_schema = ProjectDifficultyDataSchema(strict=True)
-
-
-########################################################################################################################
-########################################################################################################################
-
-# presentation workload
-class PresentationWorkload(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.duration = attr_list[4]
-        self.intercept = attr_list[5]
-
-    def update(self, attr_list):
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.duration = attr_list[4]
-        self.intercept = attr_list[5]
-
-
-class PresentationWorkloadSchema(ma.ModelSchema):
-    class Meta:
-        model = PresentationWorkload
-
-
-presentation_workload_schema = PresentationWorkloadSchema(strict=True)
-
-
-class PresentationWorkloadResource(Resource):
-    def get(self, module_code):
-        presentation_workload_query = PresentationWorkload.query.filter_by(code=module_code).first()
-        result = presentation_workload_schema.dump(presentation_workload_query).data
-        return result
-
-
-api.add_resource(PresentationWorkloadResource, '/workload/presentation/<string:module_code>')
-
-
-# presentation difficulty
-class PresentationDifficulty(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.duration = attr_list[4]
-        self.intercept = attr_list[5]
-
-    def update(self, attr_list):
-        self.time = attr_list[0]
-        self.percentage = attr_list[1]
-        self.coverage = attr_list[2]
-        self.people = attr_list[3]
-        self.duration = attr_list[4]
-        self.intercept = attr_list[5]
-
-
-class PresentationDifficultySchema(ma.ModelSchema):
-    class Meta:
-        model = PresentationDifficulty
-
-
-presentation_difficulty_schema = PresentationDifficultySchema(strict=True)
-
-
-class PresentationDifficultyResource(Resource):
-    def get(self, module_code):
-        presentation_difficulty_query = PresentationDifficulty.query.filter_by(code=module_code).first()
-        result = presentation_difficulty_schema.dump(presentation_difficulty_query).data
-        return result
-
-
-api.add_resource(PresentationDifficultyResource, '/difficulty/presentation/<string:module_code>')
-
-
-# presentation workload data
-class PresentationWorkloadData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.time = attr_dict['time']
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.people = attr_dict['people']
-        self.duration = attr_dict['duration']
-        self.result = attr_dict['result']
-
-
-class PresentationWorkloadDataSchema(ma.ModelSchema):
-    class Meta:
-        model = PresentationWorkloadData
-
-
-presentation_workload_data_schema = PresentationWorkloadDataSchema(strict=True)
-
-
-# presentation difficulty data
-class PresentationDifficultyData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    time = db.Column(db.Float)
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    people = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.time = attr_dict['time']
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.people = attr_dict['people']
-        self.duration = attr_dict['duration']
-        self.result = attr_dict['result']
-
-
-class PresentationDifficultyDataSchema(ma.ModelSchema):
-    class Meta:
-        model = PresentationDifficultyData
-
-
-presentation_difficulty_data_schema = PresentationDifficultyDataSchema(strict=True)
-
-
-########################################################################################################################
-########################################################################################################################
-
-# reading workload
-class ReadingWorkload(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.intercept = attr_list[2]
-
-    def update(self, attr_list):
-        self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.intercept = attr_list[2]
-
-
-class ReadingWorkloadSchema(ma.ModelSchema):
-    class Meta:
-        model = ReadingWorkload
-
-
-reading_workload_schema = ReadingWorkloadSchema(strict=True)
-
-
-class ReadingWorkloadResource(Resource):
-    def get(self, module_code):
-        reading_workload_query = ReadingWorkload.query.filter_by(code=module_code).first()
-        result = reading_workload_schema.dump(reading_workload_query).data
-        return result
-
-
-api.add_resource(ReadingWorkloadResource, '/workload/reading/<string:module_code>')
-
-
-# reading difficulty
-class ReadingDifficulty(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.intercept = attr_list[2]
-
-    def update(self, attr_list):
-        self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.intercept = attr_list[2]
-
-
-class ReadingDifficultySchema(ma.ModelSchema):
-    class Meta:
-        model = ReadingDifficulty
-
-
-reading_difficulty_schema = ReadingDifficultySchema(strict=True)
-
-
-class ReadingDifficultyResource(Resource):
-    def get(self, module_code):
-        reading_difficulty_query = ReadingDifficulty.query.filter_by(code=module_code).first()
-        result = reading_difficulty_schema.dump(reading_difficulty_query).data
-        return result
-
-
-api.add_resource(ReadingDifficultyResource, '/difficulty/reading/<string:module_code>')
-
-
-# reading workload data
-class ReadingWorkloadData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.amount = attr_dict['amount']
-        self.difficulty = attr_dict['difficulty']
-        self.result = attr_dict['result']
-
-
-class ReadingWorkloadDataSchema(ma.ModelSchema):
-    class Meta:
-        model = ReadingWorkloadData
-
-
-reading_workload_data_schema = ReadingWorkloadDataSchema(strict=True)
-
-
-# reading difficulty data
-class ReadingDifficultyData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.amount = attr_dict['amount']
-        self.difficulty = attr_dict['difficulty']
-        self.result = attr_dict['result']
-
-
-class ReadingDifficultyDataSchema(ma.ModelSchema):
-    class Meta:
-        model = ReadingDifficultyData
-
-
-reading_difficulty_data_schema = ReadingDifficultyDataSchema(strict=True)
-
-
-########################################################################################################################
-########################################################################################################################
-
-# test workload
-class TestWorkload(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-    def update(self, attr_list):
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-
-class TestWorkloadSchema(ma.ModelSchema):
-    class Meta:
-        model = TestWorkload
-
-
-test_workload_schema = TestWorkloadSchema(strict=True)
-
-
-class TestWorkloadResource(Resource):
-    def get(self, module_code):
-        test_workload_query = TestWorkload.query.filter_by(code=module_code).first()
-        result = test_workload_schema.dump(test_workload_query).data
-        return result
-
-
-api.add_resource(TestWorkloadResource, '/workload/test/<string:module_code>')
-
-
-# test difficulty
-class TestDifficulty(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-    def update(self, attr_list):
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-
-class TestDifficultySchema(ma.ModelSchema):
-    class Meta:
-        model = TestDifficulty
-
-
-test_difficulty_schema = TestDifficultySchema(strict=True)
-
-
-class TestDifficultyResource(Resource):
-    def get(self, module_code):
-        test_difficulty_query = TestDifficulty.query.filter_by(code=module_code).first()
-        result = test_difficulty_schema.dump(test_difficulty_query).data
-        return result
-
-
-api.add_resource(TestDifficultyResource, '/difficulty/test/<string:module_code>')
-
-
-# test workload data
-class TestWorkloadData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.duration = attr_dict['duration']
-        self.result = attr_dict['result']
-
-
-class TestWorkloadDataSchema(ma.ModelSchema):
-    class Meta:
-        model = TestWorkloadData
-
-
-test_workload_data_schema = TestWorkloadDataSchema(strict=True)
-
-
-# test difficulty data
-class TestDifficultyData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.duration = attr_dict['duration']
-        self.result = attr_dict['result']
-
-
-class TestDifficultyDataSchema(ma.ModelSchema):
-    class Meta:
-        model = TestDifficultyData
-
-
-test_difficulty_data_schema = TestDifficultyDataSchema(strict=True)
-
-
-########################################################################################################################
-########################################################################################################################
-
-# exam workload
-class ExamWorkload(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-    def update(self, attr_list):
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-
-class ExamWorkloadSchema(ma.ModelSchema):
-    class Meta:
-        model = ExamWorkload
-
-
-exam_workload_schema = ExamWorkloadSchema(strict=True)
-
-
-class ExamWorkloadResource(Resource):
-    def get(self, module_code):
-        exam_workload_query = ExamWorkload.query.filter_by(code=module_code).first()
-        result = exam_workload_schema.dump(exam_workload_query).data
-        return result
-
-
-api.add_resource(ExamWorkloadResource, '/workload/exam/<string:module_code>')
-
-
-# exam difficulty
-class ExamDifficulty(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    intercept = db.Column(db.Float)
-
-    def __init__(self, code, attr_list):
-        self.code = code
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-    def update(self, attr_list):
-        self.percentage = attr_list[0]
-        self.coverage = attr_list[1]
-        self.duration = attr_list[2]
-        self.intercept = attr_list[3]
-
-
-class ExamDifficultySchema(ma.ModelSchema):
-    class Meta:
-        model = ExamDifficulty
-
-
-exam_difficulty_schema = ExamDifficultySchema(strict=True)
-
-
-class ExamDifficultyResource(Resource):
-    def get(self, module_code):
-        exam_difficulty_query = ExamDifficulty.query.filter_by(code=module_code).first()
-        result = exam_difficulty_schema.dump(exam_difficulty_query).data
-        return result
-
-
-api.add_resource(ExamDifficultyResource, '/difficulty/exam/<string:module_code>')
-
-
-# exam workload data
-class ExamWorkloadData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.duration = attr_dict['duration']
-        self.result = attr_dict['result']
-
-
-class ExamWorkloadDataSchema(ma.ModelSchema):
-    class Meta:
-        model = ExamWorkloadData
-
-
-exam_workload_data_schema = ExamWorkloadDataSchema(strict=True)
-
-
-# exam difficulty data
-class ExamDifficultyData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(10))
-    percentage = db.Column(db.Float)
-    coverage = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    result = db.Column(db.Float)
-
-    def __init__(self, code, attr_dict):
-        self.code = code
-        self.percentage = attr_dict['percentage']
-        self.coverage = attr_dict['coverage']
-        self.duration = attr_dict['duration']
-        self.result = attr_dict['result']
-
-
-class ExamDifficultyDataSchema(ma.ModelSchema):
-    class Meta:
-        model = ExamDifficultyData
-
-
-exam_difficulty_data_schema = ExamDifficultyDataSchema(strict=True)
 
 ########################################################################################################################
 ########################################################################################################################
@@ -869,26 +85,39 @@ db.create_all()
 
 
 class Train(Resource):
-    attribute_dict = dict(assignment=['time', 'percentage', 'coverage', 'people'],
-                          project=['time', 'percentage', 'coverage', 'people'],
-                          presentation=['time', 'percentage', 'coverage', 'people', 'duration'],
-                          reading=['amount', 'difficulty'],
-                          exam=['percentage', 'coverage', 'duration'],
-                          test=['percentage', 'coverage', 'duration'])
+    attribute_dict = dict(
+        assignment_simple=['time', 'percentage', 'coverage', 'people'],
+        project_simple=['time', 'percentage', 'coverage', 'people'],
+        presentation_simple=['time', 'percentage', 'coverage', 'people', 'duration'],
+        reading_simple=['amount', 'difficulty'],
+        exam_simple=['percentage', 'coverage', 'duration'],
+        test_simple=['percentage', 'coverage', 'duration'],
+        assignment_complex=['cap', 'semesters', 'credits', 'time', 'percentage', 'coverage', 'people'],
+        project_complex=['cap', 'semesters', 'credits', 'time', 'percentage', 'coverage', 'people'],
+        presentation_complex=['cap', 'semesters', 'credits', 'time', 'percentage', 'coverage', 'people', 'duration'],
+        reading_complex=['cap', 'semesters', 'credits', 'amount', 'difficulty'],
+        exam_complex=['cap', 'semesters', 'credits', 'percentage', 'coverage', 'duration'],
+        test_complex=['cap', 'semesters', 'credits', 'percentage', 'coverage', 'duration'],
+        difficulty_simple=['level', 'mc', 'lecture', 'tutorial', 'lab', 'project', 'preparation'],
+        difficulty_complex=['cap', 'semesters', 'credits', 'level', 'mc', 'lecture', 'tutorial', 'lab', 'project', 'preparation']
+    )
 
     def post(self):
-        self.train_assignment_workload()
-        self.train_assignment_difficulty()
-        self.train_presentation_workload()
-        self.train_presentation_difficulty()
-        self.train_project_workload()
-        self.train_project_difficulty()
-        self.train_reading_workload()
-        self.train_reading_difficulty()
-        self.train_test_workload()
-        self.train_test_difficulty()
-        self.train_exam_workload()
-        self.train_exam_difficulty()
+        self.train_assignment_workload_simple()
+        self.train_presentation_workload_simple()
+        self.train_project_workload_simple()
+        self.train_reading_workload_simple()
+        self.train_test_workload_simple()
+        self.train_exam_workload_simple()
+        self.train_difficulty_simple()
+
+        self.train_assignment_workload_complex()
+        self.train_presentation_workload_complex()
+        self.train_project_workload_complex()
+        self.train_reading_workload_complex()
+        self.train_test_workload_complex()
+        self.train_exam_workload_complex()
+        self.train_difficulty_complex()
 
     def train(self, data_model, model, data_schema, category):
         data_query = data_model.query.order_by(data_model.code.asc()).all()
@@ -947,66 +176,75 @@ class Train(Resource):
 
         db.session.commit()
 
-    def train_assignment_workload(self):
-        self.train(AssignmentWorkloadData, AssignmentWorkload, assignment_workload_data_schema, 'assignment')
+    def train_assignment_workload_simple(self):
+        self.train(AssignmentWorkloadSimpleData, AssignmentWorkloadSimple, assignment_workload_simple_data_schema, 'assignment_simple')
 
-        return 'assignment workload train success'
+        return 'assignment workload simple train success'
 
-    def train_assignment_difficulty(self):
-        self.train(AssignmentDifficultyData, AssignmentDifficulty, assignment_difficulty_data_schema, 'assignment')
+    def train_assignment_workload_complex(self):
+        self.train(AssignmentWorkloadComplexData, AssignmentWorkloadComplex, assignment_workload_complex_data_schema, 'assignment_complex')
 
-        return "assignment difficulty train success"
+        return 'assignment workload complex train success'
 
-    def train_presentation_workload(self):
-        self.train(PresentationWorkloadData, PresentationWorkload, presentation_workload_data_schema, 'presentation')
+    def train_presentation_workload_simple(self):
+        self.train(PresentationWorkloadSimpleData, PresentationWorkloadSimple, presentation_workload_simple_data_schema, 'presentation_simple')
 
-        return "presentation workload train success"
+        return "presentation workload simple train success"
 
-    def train_presentation_difficulty(self):
-        self.train(PresentationDifficultyData, PresentationDifficulty, presentation_difficulty_data_schema,
-                   'presentation')
+    def train_presentation_workload_complex(self):
+        self.train(PresentationWorkloadComplexData, PresentationWorkloadComplex, presentation_workload_complex_data_schema, 'presentation_complex')
 
-        return "presentation difficulty train success"
+        return "presentation workload complex train success"
 
-    def train_project_workload(self):
-        self.train(ProjectWorkloadData, ProjectWorkload, project_workload_data_schema, 'project')
+    def train_project_workload_simple(self):
+        self.train(ProjectWorkloadSimpleData, ProjectWorkloadSimple, project_workload_simple_data_schema, 'project_simple')
 
-        return "project workload train success"
+        return "project workload simple train success"
 
-    def train_project_difficulty(self):
-        self.train(ProjectDifficultyData, ProjectDifficulty, project_difficulty_data_schema, 'project')
+    def train_project_workload_complex(self):
+        self.train(ProjectWorkloadComplexData, ProjectWorkloadComplex, project_workload_complex_data_schema, 'project_complex')
 
-        return "project difficulty train success"
+        return "project workload complex train success"
 
-    def train_reading_workload(self):
-        self.train(ReadingWorkloadData, ReadingWorkload, reading_workload_data_schema, 'reading')
+    def train_reading_workload_simple(self):
+        self.train(ReadingWorkloadSimpleData, ReadingWorkloadSimple, reading_workload_simple_data_schema, 'reading_simple')
 
-        return "reading workload train success"
+        return "reading workload simple train success"
 
-    def train_reading_difficulty(self):
-        self.train(ReadingDifficultyData, ReadingDifficulty, reading_difficulty_data_schema, 'reading')
+    def train_reading_workload_complex(self):
+        self.train(ReadingWorkloadComplexData, ReadingWorkloadComplex, reading_workload_complex_data_schema, 'reading_complex')
 
-        return "reading difficulty train success"
+        return "reading workload complex train success"
 
-    def train_test_workload(self):
-        self.train(TestWorkloadData, TestWorkload, test_workload_data_schema, 'test')
+    def train_test_workload_simple(self):
+        self.train(TestWorkloadSimpleData, TestWorkloadSimple, test_workload_simple_data_schema, 'test_simple')
 
-        return "test workload train success"
+        return "test workload simple train success"
 
-    def train_test_difficulty(self):
-        self.train(TestDifficultyData, TestDifficulty, test_difficulty_data_schema, 'test')
+    def train_test_workload_complex(self):
+        self.train(TestWorkloadComplexData, TestWorkloadComplex, test_workload_complex_data_schema, 'test_complex')
 
-        return "test difficulty train success"
+        return "test workload complex train success"
 
-    def train_exam_workload(self):
-        self.train(ExamWorkloadData, ExamWorkload, exam_workload_data_schema, 'exam')
+    def train_exam_workload_simple(self):
+        self.train(ExamWorkloadSimpleData, ExamWorkloadSimple, exam_workload_simple_data_schema, 'exam_simple')
 
-        return "exam workload train success"
+        return "exam workload simple train success"
 
-    def train_exam_difficulty(self):
-        self.train(ExamDifficultyData, ExamDifficulty, exam_difficulty_data_schema, 'exam')
+    def train_exam_workload_complex(self):
+        self.train(ExamWorkloadComplexData, ExamWorkloadComplex, exam_workload_complex_data_schema, 'exam_complex')
 
-        return "exam difficulty train success"
+        return "exam workload complex train success"
+
+    def train_difficulty_simple(self):
+        self.train(DifficultySimpleData, DifficultySimple, difficulty_simple_data_schema, 'difficulty_simple')
+
+        return "difficulty simple train success"
+
+    def train_difficulty_complex(self):
+        self.train(DifficultyComplexData, DifficultyComplex, difficulty_complex_data_schema, 'difficulty_complex')
+
+        return "difficulty complex train success"
 
 
 api.add_resource(Train, '/train')
@@ -1014,12 +252,22 @@ api.add_resource(Train, '/train')
 
 class Data(Resource):
     module_code_pattern = re.compile('^[a-z]{2,3}[0-9]{4}[a-z]?$')
-    data_attribute_dict = dict(assignment=['time', 'percentage', 'coverage', 'people', 'result'],
-                               project=['time', 'percentage', 'coverage', 'people', 'result'],
-                               presentation=['time', 'percentage', 'coverage', 'people', 'duration', 'result'],
-                               reading=['amount', 'difficulty', 'result'],
-                               exam=['percentage', 'coverage', 'duration', 'result'],
-                               test=['percentage', 'coverage', 'duration', 'result'])
+    data_attribute_dict = dict(
+        assignment_simple=['time', 'percentage', 'coverage', 'people', 'result'],
+        project_simple=['time', 'percentage', 'coverage', 'people', 'result'],
+        presentation_simple=['time', 'percentage', 'coverage', 'people', 'duration', 'result'],
+        reading_simple=['amount', 'difficulty', 'result'],
+        exam_simple=['percentage', 'coverage', 'duration', 'result'],
+        test_simple=['percentage', 'coverage', 'duration', 'result'],
+        assignment_complex=['cap', 'semesters', 'credits', 'time', 'percentage', 'coverage', 'people', 'result'],
+        project_complex=['cap', 'semesters', 'credits', 'time', 'percentage', 'coverage', 'people', 'result'],
+        presentation_complex=['cap', 'semesters', 'credits', 'time', 'percentage', 'coverage', 'people', 'duration', 'result'],
+        reading_complex=['cap', 'semesters', 'credits', 'amount', 'difficulty', 'result'],
+        exam_complex=['cap', 'semesters', 'credits', 'percentage', 'coverage', 'duration', 'result'],
+        test_complex=['cap', 'semesters', 'credits', 'percentage', 'coverage', 'duration', 'result'],
+        difficulty_simple=['level', 'mc', 'lecture', 'tutorial', 'lab', 'project', 'preparation', 'result'],
+        difficulty_complex=['cap', 'semesters', 'credits', 'level', 'mc', 'lecture', 'tutorial', 'lab', 'project', 'preparation', 'result']
+    )
 
     def get(self, category, assessment, module_code):
         module_code = module_code.lower()
@@ -1052,35 +300,40 @@ class Data(Resource):
             return 'error module code'
 
         if assessment == 'assignment':
-            if category == 'workload':
-                result = self.update_assignment_workload_data(module_code, request.form)
-            elif category == 'difficulty':
-                result = self.update_assignment_difficulty_data(module_code, request.form)
+            if category == 'simple':
+                result = self.update_assignment_workload_simple_data(module_code, request.form)
+            elif category == 'complex':
+                result = self.update_assignment_workload_complex_data(module_code, request.form)
         elif assessment == 'project':
-            if category == 'workload':
-                result = self.update_project_workload_data(module_code, request.form)
-            elif category == 'difficulty':
-                result = self.update_project_difficulty_data(module_code, request.form)
+            if category == 'simple':
+                result = self.update_project_workload_simple_data(module_code, request.form)
+            elif category == 'complex':
+                result = self.update_project_workload_complex_data(module_code, request.form)
         elif assessment == 'presentation':
-            if category == 'workload':
-                result = self.update_presentation_workload_data(module_code, request.form)
-            elif category == 'difficulty':
-                result = self.update_presentation_difficulty_data(module_code, request.form)
+            if category == 'simple':
+                result = self.update_presentation_workload_simple_data(module_code, request.form)
+            elif category == 'complex':
+                result = self.update_presentation_workload_complex_data(module_code, request.form)
         elif assessment == 'reading':
-            if category == 'workload':
-                result = self.update_reading_workload_data(module_code, request.form)
-            elif category == 'difficulty':
-                result = self.update_reading_difficulty_data(module_code, request.form)
+            if category == 'simple':
+                result = self.update_reading_workload_simple_data(module_code, request.form)
+            elif category == 'complex':
+                result = self.update_reading_workload_complex_data(module_code, request.form)
         elif assessment == 'test':
-            if category == 'workload':
-                result = self.update_test_workload_data(module_code, request.form)
-            elif category == 'difficulty':
-                result = self.update_test_difficulty_data(module_code, request.form)
+            if category == 'simple':
+                result = self.update_test_workload_simple_data(module_code, request.form)
+            elif category == 'complex':
+                result = self.update_test_workload_complex_data(module_code, request.form)
         elif assessment == 'exam':
-            if category == 'workload':
-                result = self.update_exam_workload_data(module_code, request.form)
-            elif category == 'difficulty':
-                result = self.update_exam_difficulty_data(module_code, request.form)
+            if category == 'simple':
+                result = self.update_exam_workload_simple_data(module_code, request.form)
+            elif category == 'complex':
+                result = self.update_exam_workload_complex_data(module_code, request.form)
+        elif assessment == 'difficulty':
+            if category == 'simple':
+                result = self.update_difficulty_simple_data(module_code, request.form)
+            elif category == 'complex':
+                result = self.update_difficulty_complex_data(module_code, request.form)
 
         return result
 
@@ -1093,43 +346,49 @@ class Data(Resource):
         db.session.add(data_m)
         db.session.commit()
 
-        return 'update ' + assessment + ' success'
+        return 'update ' + assessment + ' for ' + module_code + ' success'
 
-    def update_assignment_workload_data(self, module_code, data):
-        return self.update_data(AssignmentWorkloadData, 'assignment', module_code, data)
+    def update_assignment_workload_simple_data(self, module_code, data):
+        return self.update_data(AssignmentWorkloadSimpleData, 'assignment_simple', module_code, data)
 
-    def update_assignment_difficulty_data(self, module_code, data):
-        return self.update_data(AssignmentDifficultyData, 'assignment', module_code, data)
+    def update_assignment_workload_complex_data(self, module_code, data):
+        return self.update_data(AssignmentWorkloadComplexData, 'assignment_complex', module_code, data)
 
-    def update_project_workload_data(self, module_code, data):
-        return self.update_data(ProjectWorkloadData, 'project', module_code, data)
+    def update_project_workload_simple_data(self, module_code, data):
+        return self.update_data(ProjectWorkloadSimpleData, 'project_simple', module_code, data)
 
-    def update_project_difficulty_data(self, module_code, data):
-        return self.update_data(ProjectDifficultyData, 'project', module_code, data)
+    def update_project_workload_complex_data(self, module_code, data):
+        return self.update_data(ProjectWorkloadComplexData, 'project_complex', module_code, data)
 
-    def update_presentation_workload_data(self, module_code, data):
-        return self.update_data(PresentationWorkloadData, 'presentation', module_code, data)
+    def update_presentation_workload_simple_data(self, module_code, data):
+        return self.update_data(PresentationWorkloadSimpleData, 'presentation_simple', module_code, data)
 
-    def update_presentation_difficulty_data(self, module_code, data):
-        return self.update_data(PresentationDifficultyData, 'presentation', module_code, data)
+    def update_presentation_workload_complex_data(self, module_code, data):
+        return self.update_data(PresentationWorkloadComplexData, 'presentation_complex', module_code, data)
 
-    def update_reading_workload_data(self, module_code, data):
-        return self.update_data(ReadingWorkloadData, 'reading', module_code, data)
+    def update_reading_workload_simple_data(self, module_code, data):
+        return self.update_data(ReadingWorkloadSimpleData, 'reading_simple', module_code, data)
 
-    def update_reading_difficulty_data(self, module_code, data):
-        return self.update_data(ReadingDifficultyData, 'reading', module_code, data)
+    def update_reading_workload_complex_data(self, module_code, data):
+        return self.update_data(ReadingWorkloadComplexData, 'reading_complex', module_code, data)
 
-    def update_test_workload_data(self, module_code, data):
-        return self.update_data(TestWorkloadData, 'test', module_code, data)
+    def update_test_workload_simple_data(self, module_code, data):
+        return self.update_data(TestWorkloadSimpleData, 'test_simple', module_code, data)
 
-    def update_test_difficulty_data(self, module_code, data):
-        return self.update_data(TestDifficultyData, 'test', module_code, data)
+    def update_test_workload_complex_data(self, module_code, data):
+        return self.update_data(TestWorkloadComplexData, 'test_complex', module_code, data)
 
-    def update_exam_workload_data(self, module_code, data):
-        return self.update_data(ExamWorkloadData, 'exam', module_code, data)
+    def update_exam_workload_simple_data(self, module_code, data):
+        return self.update_data(ExamWorkloadSimpleData, 'exam_simple', module_code, data)
 
-    def update_exam_difficulty_data(self, module_code, data):
-        return self.update_data(ExamDifficultyData, 'exam', module_code, data)
+    def update_exam_workload_complex_data(self, module_code, data):
+        return self.update_data(ExamWorkloadComplexData, 'exam_complex', module_code, data)
+
+    def update_difficulty_simple_data(self, module_code, data):
+        return self.update_data(DifficultySimpleData, 'difficulty_simple', module_code, data)
+
+    def update_difficulty_complex_data(self, module_code, data):
+        return self.update_data(DifficultyComplexData, 'difficulty_complex', module_code, data)
 
 
 api.add_resource(Data, '/data/<string:category>/<string:assessment>/<string:module_code>')
