@@ -43,22 +43,22 @@ def index():
     return 'Hello World!'
 
 # simple
-api.add_resource(AssignmentWorkloadSimpleResource, '/workload/assignment/simple/<string:module_code>')
-api.add_resource(PresentationWorkloadSimpleResource, '/workload/presentation/simple/<string:module_code>')
-api.add_resource(ProjectWorkloadSimpleResource, '/workload/project/simple/<string:module_code>')
-api.add_resource(ReadingWorkloadSimpleResource, '/workload/reading/simple/<string:module_code>')
-api.add_resource(TestWorkloadSimpleResource, '/workload/test/simple/<string:module_code>')
-api.add_resource(ExamWorkloadSimpleResource, '/workload/exam/simple/<string:module_code>')
-api.add_resource(DifficultySimpleResource, '/workload/difficulty/simple/<string:module_code>')
+api.add_resource(AssignmentWorkloadSimpleResource, '/workload/simple/assignment/<string:module_code>')
+api.add_resource(PresentationWorkloadSimpleResource, '/workload/simple/presentation/<string:module_code>')
+api.add_resource(ProjectWorkloadSimpleResource, '/workload/simple/project/<string:module_code>')
+api.add_resource(ReadingWorkloadSimpleResource, '/workload/simple/reading/<string:module_code>')
+api.add_resource(TestWorkloadSimpleResource, '/workload/simple/test/<string:module_code>')
+api.add_resource(ExamWorkloadSimpleResource, '/workload/simple/exam/<string:module_code>')
+api.add_resource(DifficultySimpleResource, '/workload/simple/difficulty/<string:module_code>')
 
 # complex
-api.add_resource(AssignmentWorkloadComplexResource, '/workload/assignment/complex/<string:module_code>')
-api.add_resource(PresentationWorkloadComplexResource, '/workload/presentation/complex/<string:module_code>')
-api.add_resource(ProjectWorkloadComplexResource, '/workload/project/complex/<string:module_code>')
-api.add_resource(ReadingWorkloadComplexResource, '/workload/reading/complex/<string:module_code>')
-api.add_resource(TestWorkloadComplexResource, '/workload/test/complex/<string:module_code>')
-api.add_resource(ExamWorkloadComplexResource, '/workload/exam/complex/<string:module_code>')
-api.add_resource(DifficultyComplexResource, '/workload/difficulty/complex/<string:module_code>')
+api.add_resource(AssignmentWorkloadComplexResource, '/workload/complex/assignment/<string:module_code>')
+api.add_resource(PresentationWorkloadComplexResource, '/workload/complex/presentation/<string:module_code>')
+api.add_resource(ProjectWorkloadComplexResource, '/workload/complex/project/<string:module_code>')
+api.add_resource(ReadingWorkloadComplexResource, '/workload/complex/reading/<string:module_code>')
+api.add_resource(TestWorkloadComplexResource, '/workload/complex/test/<string:module_code>')
+api.add_resource(ExamWorkloadComplexResource, '/workload/complex/exam/<string:module_code>')
+api.add_resource(DifficultyComplexResource, '/workload/complex/difficulty/<string:module_code>')
 
 # data schema simple
 assignment_workload_simple_data_schema = AssignmentWorkloadSimpleDataSchema(strict=True)
