@@ -6,13 +6,11 @@ class ReadingWorkloadSimpleData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10))
     amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
     result = db.Column(db.Float)
 
     def __init__(self, code, attr_dict):
         self.code = code
         self.amount = attr_dict['amount']
-        self.difficulty = attr_dict['difficulty']
         self.result = attr_dict['result']
 
     def as_dict(self):
@@ -41,7 +39,6 @@ class ReadingWorkloadComplexData(db.Model):
         self.semesters = attr_dict['semesters']
         self.credits = attr_dict['credits']
         self.amount = attr_dict['amount']
-        self.difficulty = attr_dict['difficulty']
         self.result = attr_dict['result']
 
     def as_dict(self):

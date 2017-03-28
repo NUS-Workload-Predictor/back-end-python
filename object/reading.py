@@ -8,19 +8,16 @@ class ReadingWorkloadSimple(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10))
     amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
     intercept = db.Column(db.Float)
 
     def __init__(self, code, attr_list):
         self.code = code
         self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.intercept = attr_list[2]
+        self.intercept = attr_list[1]
 
     def update(self, attr_list):
         self.amount = attr_list[0]
-        self.difficulty = attr_list[1]
-        self.intercept = attr_list[2]
+        self.intercept = attr_list[1]
 
 
 class ReadingWorkloadSimpleSchema(ma.ModelSchema):
@@ -46,7 +43,6 @@ class ReadingWorkloadComplex(db.Model):
     semesters = db.Column(db.Float)
     credits = db.Column(db.Float)
     amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
     intercept = db.Column(db.Float)
 
     def __init__(self, code, attr_list):
@@ -55,16 +51,14 @@ class ReadingWorkloadComplex(db.Model):
         self.semesters = attr_list[1]
         self.credits = attr_list[2]
         self.amount = attr_list[3]
-        self.difficulty = attr_list[4]
-        self.intercept = attr_list[5]
+        self.intercept = attr_list[4]
 
     def update(self, attr_list):
         self.cap = attr_list[0]
         self.semesters = attr_list[1]
         self.credits = attr_list[2]
         self.amount = attr_list[3]
-        self.difficulty = attr_list[4]
-        self.intercept = attr_list[5]
+        self.intercept = attr_list[4]
 
 
 class ReadingWorkloadComplexSchema(ma.ModelSchema):
