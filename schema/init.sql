@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.5.5-10.1.21-MariaDB)
 # Database: nusworks
-# Generation Time: 2017-01-29 09:14:34 +0000
+# Generation Time: 2017-03-30 12:16:43 +0000
 # ************************************************************
 
 
@@ -20,199 +20,575 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-# Dump of table assignment_difficulty
+# Dump of table assignment_workload_complex
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `assignment_difficulty`;
+DROP TABLE IF EXISTS `assignment_workload_complex`;
 
-CREATE TABLE `assignment_difficulty` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `time` float NOT NULL,
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `people` float NOT NULL,
+CREATE TABLE `assignment_workload_complex` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table assignment_workload
+# Dump of table assignment_workload_complex_data
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `assignment_workload`;
+DROP TABLE IF EXISTS `assignment_workload_complex_data`;
 
-CREATE TABLE `assignment_workload` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `time` float NOT NULL,
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `people` float NOT NULL,
+CREATE TABLE `assignment_workload_complex_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table exam_difficulty
+# Dump of table assignment_workload_simple
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `exam_difficulty`;
+DROP TABLE IF EXISTS `assignment_workload_simple`;
 
-CREATE TABLE `exam_difficulty` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `duration` float NOT NULL,
+CREATE TABLE `assignment_workload_simple` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table exam_workload
+# Dump of table assignment_workload_simple_data
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `exam_workload`;
+DROP TABLE IF EXISTS `assignment_workload_simple_data`;
 
-CREATE TABLE `exam_workload` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `duration` float NOT NULL,
+CREATE TABLE `assignment_workload_simple_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table presentation_difficulty
+# Dump of table difficulty_complex
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `presentation_difficulty`;
+DROP TABLE IF EXISTS `difficulty_complex`;
 
-CREATE TABLE `presentation_difficulty` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `time` float NOT NULL,
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `people` float NOT NULL,
-  `duration` float NOT NULL,
+CREATE TABLE `difficulty_complex` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `level` float DEFAULT NULL,
+  `mc` float DEFAULT NULL,
+  `lecture` float DEFAULT NULL,
+  `tutorial` float DEFAULT NULL,
+  `lab` float DEFAULT NULL,
+  `project` float DEFAULT NULL,
+  `preparation` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table presentation_workload
+# Dump of table difficulty_complex_data
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `presentation_workload`;
+DROP TABLE IF EXISTS `difficulty_complex_data`;
 
-CREATE TABLE `presentation_workload` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `time` float NOT NULL,
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `people` float NOT NULL,
-  `duration` float NOT NULL,
+CREATE TABLE `difficulty_complex_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `level` float DEFAULT NULL,
+  `mc` float DEFAULT NULL,
+  `lecture` float DEFAULT NULL,
+  `tutorial` float DEFAULT NULL,
+  `lab` float DEFAULT NULL,
+  `project` float DEFAULT NULL,
+  `preparation` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table project_difficulty
+# Dump of table difficulty_simple
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `project_difficulty`;
+DROP TABLE IF EXISTS `difficulty_simple`;
 
-CREATE TABLE `project_difficulty` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `time` float NOT NULL,
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `people` float NOT NULL,
+CREATE TABLE `difficulty_simple` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `level` float DEFAULT NULL,
+  `mc` float DEFAULT NULL,
+  `lecture` float DEFAULT NULL,
+  `tutorial` float DEFAULT NULL,
+  `lab` float DEFAULT NULL,
+  `project` float DEFAULT NULL,
+  `preparation` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table project_workload
+# Dump of table difficulty_simple_data
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `project_workload`;
+DROP TABLE IF EXISTS `difficulty_simple_data`;
 
-CREATE TABLE `project_workload` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `time` float NOT NULL,
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `people` float NOT NULL,
+CREATE TABLE `difficulty_simple_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `level` float DEFAULT NULL,
+  `mc` float DEFAULT NULL,
+  `lecture` float DEFAULT NULL,
+  `tutorial` float DEFAULT NULL,
+  `lab` float DEFAULT NULL,
+  `project` float DEFAULT NULL,
+  `preparation` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table reading_difficulty
+# Dump of table exam_workload_complex
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `reading_difficulty`;
+DROP TABLE IF EXISTS `exam_workload_complex`;
 
-CREATE TABLE `reading_difficulty` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `amount` float NOT NULL,
-  `difficulty` float NOT NULL,
+CREATE TABLE `exam_workload_complex` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table reading_workload
+# Dump of table exam_workload_complex_data
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `reading_workload`;
+DROP TABLE IF EXISTS `exam_workload_complex_data`;
 
-CREATE TABLE `reading_workload` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `amount` float NOT NULL,
-  `difficulty` float NOT NULL,
+CREATE TABLE `exam_workload_complex_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table test_difficulty
+# Dump of table exam_workload_simple
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `test_difficulty`;
+DROP TABLE IF EXISTS `exam_workload_simple`;
 
-CREATE TABLE `test_difficulty` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(10) NOT NULL DEFAULT '',
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `duration` float NOT NULL,
+CREATE TABLE `exam_workload_simple` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-# Dump of table test_workload
+# Dump of table exam_workload_simple_data
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `test_workload`;
+DROP TABLE IF EXISTS `exam_workload_simple_data`;
 
-CREATE TABLE `test_workload` (
+CREATE TABLE `exam_workload_simple_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table presentation_workload_complex
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `presentation_workload_complex`;
+
+CREATE TABLE `presentation_workload_complex` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table presentation_workload_complex_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `presentation_workload_complex_data`;
+
+CREATE TABLE `presentation_workload_complex_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table presentation_workload_simple
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `presentation_workload_simple`;
+
+CREATE TABLE `presentation_workload_simple` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table presentation_workload_simple_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `presentation_workload_simple_data`;
+
+CREATE TABLE `presentation_workload_simple_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table project_workload_complex
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_workload_complex`;
+
+CREATE TABLE `project_workload_complex` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table project_workload_complex_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_workload_complex_data`;
+
+CREATE TABLE `project_workload_complex_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table project_workload_simple
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_workload_simple`;
+
+CREATE TABLE `project_workload_simple` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table project_workload_simple_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_workload_simple_data`;
+
+CREATE TABLE `project_workload_simple_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `time` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `people` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table reading_workload_complex
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `reading_workload_complex`;
+
+CREATE TABLE `reading_workload_complex` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table reading_workload_complex_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `reading_workload_complex_data`;
+
+CREATE TABLE `reading_workload_complex_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table reading_workload_simple
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `reading_workload_simple`;
+
+CREATE TABLE `reading_workload_simple` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table reading_workload_simple_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `reading_workload_simple_data`;
+
+CREATE TABLE `reading_workload_simple_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table simple_module_difficulty
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `simple_module_difficulty`;
+
+CREATE TABLE `simple_module_difficulty` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) NOT NULL DEFAULT '',
-  `percentage` float NOT NULL,
-  `coverage` float NOT NULL,
-  `duration` float NOT NULL,
+  `level` float NOT NULL,
+  `lecture` float NOT NULL,
+  `tutorial` float NOT NULL,
+  `lab` float NOT NULL,
+  `project` float NOT NULL,
+  `preparation` float NOT NULL,
+  `intercept` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table simple_module_difficulty_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `simple_module_difficulty_data`;
+
+CREATE TABLE `simple_module_difficulty_data` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL DEFAULT '',
+  `level` float NOT NULL,
+  `lecture` float NOT NULL,
+  `tutorial` float NOT NULL,
+  `lab` float NOT NULL,
+  `project` float NOT NULL,
+  `preparation` float NOT NULL,
+  `result` float NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table test_workload_complex
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `test_workload_complex`;
+
+CREATE TABLE `test_workload_complex` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table test_workload_complex_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `test_workload_complex_data`;
+
+CREATE TABLE `test_workload_complex_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `cap` float DEFAULT NULL,
+  `semesters` float DEFAULT NULL,
+  `credits` float DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table test_workload_simple
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `test_workload_simple`;
+
+CREATE TABLE `test_workload_simple` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `intercept` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table test_workload_simple_data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `test_workload_simple_data`;
+
+CREATE TABLE `test_workload_simple_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) DEFAULT NULL,
+  `percentage` float DEFAULT NULL,
+  `coverage` float DEFAULT NULL,
+  `duration` float DEFAULT NULL,
+  `result` float DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
