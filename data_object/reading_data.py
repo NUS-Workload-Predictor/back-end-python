@@ -30,7 +30,6 @@ class ReadingWorkloadComplexData(db.Model):
     semesters = db.Column(db.Float)
     credits = db.Column(db.Float)
     amount = db.Column(db.Float)
-    difficulty = db.Column(db.Float)
     result = db.Column(db.Float)
 
     def __init__(self, code, attr_dict):
